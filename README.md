@@ -25,3 +25,4 @@ This web app helps an auto workshop manage customers, vehicles, service jobs, in
 2. Configure `.env` with your database and API keys.
 3. Start full app:
    - `npm run dev`
+NB REMEMBER TO CREATE ENV FILE
