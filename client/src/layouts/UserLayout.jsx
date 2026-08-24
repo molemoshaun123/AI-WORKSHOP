@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Car, Wrench, Receipt, MessageCircle, Home } from 'lucide-react'
+import { Car, Wrench, Receipt, MessageCircle, Home, DollarSign } from 'lucide-react'
 
 export default function UserLayout({ title, children }) {
   const navigate = useNavigate()
@@ -33,7 +33,7 @@ export default function UserLayout({ title, children }) {
     { name: 'Dashboard', path: '/user/dashboard', icon: <Home className="w-4 h-4" /> },
     { name: 'My Vehicles', path: '/user/vehicle', icon: <Car className="w-4 h-4" /> },
     { name: 'Book Service', path: '/user/service', icon: <Wrench className="w-4 h-4" /> },
-    { name: 'Estimates', path: '/user/estimate', icon: <Receipt className="w-4 h-4" /> },
+    { name: 'Car Value', path: '/user/car-value', icon: <DollarSign className="w-4 h-4" /> },
     { name: 'AI Assistant', path: '/user/diagnosis', icon: <MessageCircle className="w-4 h-4" /> },
     { name: 'History', path: '/user/history', icon: <Receipt className="w-4 h-4" /> },
     { name: 'Inbox', path: '/inbox', icon: <MessageCircle className="w-4 h-4" /> },

@@ -157,7 +157,7 @@ ${now}
 
 Return plain JSON with:
 reply,
-suggested_route (one of: "/user/estimate" or "/user/service"),
+suggested_route ("/user/service"),
 questions_to_ask (array),
 recommended_booking_window (string),
 draft_title (string),
@@ -253,10 +253,35 @@ next_steps (array)
 
 async function repairCostEstimate(symptoms, vehicleDetails = {}, availableParts = []) {
   const prompt = `
-You are a workshop cost estimation assistant.
-You must provide a realistic pre-inspection repair cost range.
-CRITICAL RULE: Be extremely concise and strictly factual. Do not explain your reasoning or over-elaborate. Limit your output to save tokens and ensure maximum accuracy.
-Do not mention any AI providers.
+You are a workshop cost estimation assistant specializing in the South African automotive repair market.
+You must provide a realistic pre-inspection repair cost range using REAL South African market prices.
+
+CRITICAL RULES:
+- ALL prices MUST be in South African Rand (ZAR) — prefix with "R".
+- Use REAL South African workshop labor rates: R450–R850 per hour depending on the workshop type (independent vs dealership).
+- Use REAL South African parts prices from suppliers like Midas, AutoZone, Goldwagen, or OEM dealer pricing.
+- Be extremely concise and strictly factual. Do not explain your reasoning or over-elaborate.
+- Do not mention any AI providers.
+
+South African pricing references (use as baseline, adjust for vehicle specifics):
+- Brake pads (set): R400–R2,500 (aftermarket) / R1,500–R6,000 (OEM)
+- Brake discs (pair): R800–R4,000 (aftermarket) / R2,500–R10,000 (OEM)
+- Battery: R1,200–R4,500
+- Alternator: R2,500–R8,000
+- Starter motor: R2,000–R6,500
+- Clutch kit: R3,500–R12,000
+- Radiator: R2,000–R8,000
+- Water pump: R1,200–R5,000
+- Timing belt kit: R2,500–R8,000
+- Shock absorbers (pair): R1,500–R6,000
+- Control arms (pair): R2,000–R8,000
+- Oil service (filter + oil): R800–R2,500
+- Spark plugs (set of 4): R300–R1,800
+- Fuel pump: R2,500–R7,000
+- Catalytic converter: R5,000–R25,000
+- Turbocharger: R8,000–R35,000
+- Head gasket repair: R8,000–R25,000
+- Gearbox rebuild: R12,000–R45,000
 
 Vehicle details:
 - Make: ${vehicleDetails.make || 'Unknown'}
@@ -267,20 +292,21 @@ Vehicle details:
 Symptoms / requested work:
 ${symptoms}
 
-Inventory parts snapshot:
+Inventory parts snapshot (workshop stock — use these prices if the part is relevant):
 ${JSON.stringify(availableParts || [])}
 
 Return plain JSON with:
 likely_service,
+service_category (string - one of "Minor Service", "Major Service", "Repair", "Diagnosis"),
 urgency,
 estimated_labor_hours_min,
 estimated_labor_hours_max,
-estimated_parts_cost_min,
-estimated_parts_cost_max,
-estimated_total_cost_min,
-estimated_total_cost_max,
-cost_drivers (array),
-assumptions (array),
+estimated_parts_cost_min (number in ZAR),
+estimated_parts_cost_max (number in ZAR),
+estimated_total_cost_min (number in ZAR),
+estimated_total_cost_max (number in ZAR),
+cost_drivers (array of strings),
+assumptions (array of strings),
 recommended_next_step
 `
 
@@ -629,6 +655,77 @@ top_priority_actions (array of 2-4 short strings — the most urgent things the 
   }
 }
 
+async function estimateCarValue(vehicleDetails = {}, images = []) {
+  const hasImages = Array.isArray(images) && images.length > 0
+
+  const textPrompt = `
+You are a professional automotive valuation expert specializing in the South African used car market.
+You must provide a realistic market value estimate based on the vehicle details provided.
+CRITICAL RULE: Be extremely accurate and base valuations on real South African market data.
+All prices MUST be in South African Rand (ZAR).
+Do not mention any AI providers.
+
+Vehicle details:
+- Make: ${vehicleDetails.make || 'Unknown'}
+- Model: ${vehicleDetails.model || 'Unknown'}
+- Year: ${vehicleDetails.year || 'Unknown'}
+- Mileage: ${vehicleDetails.mileage || 'Unknown'} km
+- Overall Condition: ${vehicleDetails.condition || 'Unknown'}
+- Service History: ${vehicleDetails.service_history || 'Unknown'}
+- Modifications: ${vehicleDetails.modifications || 'None'}
+- Color: ${vehicleDetails.color || 'Unknown'}
+- Transmission: ${vehicleDetails.transmission || 'Unknown'}
+- Fuel Type: ${vehicleDetails.fuel_type || 'Unknown'}
+- Province: ${vehicleDetails.province || 'Unknown'}
+
+${hasImages ? 'Photos of the vehicle have been provided. Analyze the visual condition of the car from the photos to refine your valuation. Look for paint condition, body damage, interior wear, tire condition, and overall presentation.' : 'No photos provided — base valuation on details only.'}
+
+Return plain JSON with:
+estimated_value_min (number in ZAR),
+estimated_value_max (number in ZAR),
+fair_market_value (number in ZAR — your best single estimate),
+trade_in_value (number in ZAR — typical dealer trade-in offer),
+private_sale_value (number in ZAR — expected price in a private sale),
+condition_rating (string — one of "Excellent", "Good", "Fair", "Poor"),
+confidence_score (number 0-1),
+value_factors (array of objects with: factor, impact ("positive" or "negative"), amount_zar (estimated impact in rands), explanation),
+market_comparison (string — brief comparison to similar listings),
+depreciation_notes (string — expected future value trend),
+recommendations (array of strings — tips to maximize resale value),
+photo_observations (string or null — what was observed from photos, null if no photos)
+`
+
+  try {
+    if (hasImages) {
+      const imageParts = images.slice(0, 4).map((img) => {
+        const base64Data = img.data.includes('base64,') ? img.data.split('base64,')[1] : img.data
+        return { inlineData: { data: base64Data, mimeType: img.mimeType || 'image/jpeg' } }
+      })
+
+      const visionPayload = {
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              { text: textPrompt },
+              ...imageParts,
+            ],
+          },
+        ],
+        generationConfig: {
+          responseMimeType: 'application/json',
+        },
+      }
+
+      return await generateWithFallback(visionPayload, {}, visionModelCandidates)
+    } else {
+      return await generateWithFallback(textPrompt)
+    }
+  } catch (e) {
+    return JSON.stringify(fallbackCarValuation(vehicleDetails))
+  }
+}
+
 module.exports = {
   diagnoseSymptoms,
   estimateRepairTime,
@@ -643,6 +740,7 @@ module.exports = {
   analyzeImage,
   analyzeAudio,
   forecastStock,
+  estimateCarValue,
 }
 
 function fallbackFaultDiagnosis(symptoms, vehicleDetails = {}) {
@@ -749,11 +847,11 @@ function fallbackTimeEstimate(symptoms, vehicleDetails = {}) {
     estimated_hours_max: fallback.hours[1],
     estimated_days_min: fallback.days[0],
     estimated_days_max: fallback.days[1],
-    estimated_parts_cost_min: fallback.hours[0] * 50,
-    estimated_parts_cost_max: fallback.hours[1] * 100,
-    estimated_labor_cost_min: fallback.hours[0] * 100,
-    estimated_labor_cost_max: fallback.hours[1] * 120,
-    assumptions: 'Estimate is based on common workshop experience and may change after inspection.',
+    estimated_parts_cost_min: fallback.parts ? fallback.parts[0] : Math.round(fallback.hours[0] * 800),
+    estimated_parts_cost_max: fallback.parts ? fallback.parts[1] : Math.round(fallback.hours[1] * 1500),
+    estimated_labor_cost_min: Math.round(fallback.hours[0] * 650),
+    estimated_labor_cost_max: Math.round(fallback.hours[1] * 650),
+    assumptions: 'Estimate is based on typical South African workshop rates (R650/hr labor) and aftermarket parts pricing. Final cost may change after inspection.',
     scheduling_notes: fallback.note,
   }
 }
@@ -777,9 +875,9 @@ function fallbackBookingHelper(message) {
 
   return {
     reply: shouldEstimate
-      ? 'For best booking accuracy, start with Repair Estimate. It helps you choose a suitable booking time and what details to include.'
-      : 'You can book directly. If you want a time estimate before booking, use Repair Estimate.',
-    suggested_route: shouldEstimate ? '/user/estimate' : '/user/service',
+      ? 'Based on the symptoms described, I recommend booking a service so our team can inspect your vehicle. Include as much detail as possible when booking.'
+      : 'You can book directly. Select your preferred date and describe what service you need.',
+    suggested_route: '/user/service',
     questions_to_ask: [
       'Which vehicle is this for?',
       'When did the issue start?',
@@ -787,7 +885,7 @@ function fallbackBookingHelper(message) {
       'What date/time works best for you?',
     ],
     recommended_booking_window: shouldEstimate ? 'Next 1–2 business days' : 'Next available slot',
-    draft_title: shouldEstimate ? 'Service Booking (Needs Estimate)' : 'Service Booking',
+    draft_title: shouldEstimate ? 'Service Booking (Inspection Needed)' : 'Service Booking',
     draft_symptoms: String(message || '').slice(0, 400),
     draft_appointment_date_iso: '',
   }
@@ -901,41 +999,126 @@ function fallbackRepairCostEstimate(symptoms, vehicleDetails = {}, availablePart
   const text = String(symptoms || '').toLowerCase()
   const has = (w) => text.includes(w)
 
+  // Realistic South African workshop labor rate (ZAR per hour)
+  const laborRate = 650 // Average SA independent workshop rate
+
   let labor = [1.5, 3.5]
-  let parts = [0, 120]
+  let parts = [500, 2500]
   let service = 'General inspection and repair'
+  let serviceCategory = 'Repair'
   let urgency = 'medium'
   const drivers = ['Final cost depends on inspection findings']
 
-  if (has('brake')) {
+  if (has('brake') && (has('pad') || has('disc') || has('rotor'))) {
     labor = [2, 4]
-    parts = [80, 260]
-    service = 'Brake system service'
+    parts = [1200, 5500]
+    service = 'Brake system service (pads and/or discs)'
+    serviceCategory = 'Repair'
+    drivers.push('Pad and rotor condition determine whether resurfacing or replacement is needed')
+    drivers.push('OEM parts cost significantly more than aftermarket alternatives')
+  } else if (has('brake')) {
+    labor = [1.5, 3.5]
+    parts = [800, 3500]
+    service = 'Brake system inspection and repair'
+    serviceCategory = 'Repair'
     drivers.push('Pad, rotor, and fluid condition can change the final price')
-  } else if (has('battery') || has('start')) {
-    labor = [0.5, 1.5]
-    parts = [70, 220]
+  } else if (has('battery') || has('won\'t start') || has('no start')) {
+    labor = [0.5, 2]
+    parts = [1500, 4500]
     service = 'Battery and starting system repair'
-    drivers.push('Battery rating and charging-system faults affect cost')
+    serviceCategory = 'Repair'
+    drivers.push('Battery size, brand, and CCA rating affect cost')
+    drivers.push('If the alternator or starter is faulty, costs increase significantly')
   } else if (has('overheat') || has('coolant') || has('radiator')) {
-    labor = [3, 6]
-    parts = [120, 420]
+    labor = [3, 7]
+    parts = [2000, 9000]
     service = 'Cooling system diagnosis and repair'
+    serviceCategory = 'Repair'
     urgency = 'high'
-    drivers.push('Leaks, thermostat, radiator, or pump failure can change the parts bill')
-  } else if (has('suspension') || has('shock') || has('steering')) {
-    labor = [2.5, 5.5]
-    parts = [120, 480]
-    service = 'Suspension or steering work'
-    drivers.push('Alignment and worn component count affect total cost')
+    drivers.push('Radiator replacement vs repair significantly changes total cost')
+    drivers.push('Water pump and thermostat may need replacement simultaneously')
+  } else if (has('clutch')) {
+    labor = [5, 10]
+    parts = [3500, 12000]
+    service = 'Clutch kit replacement'
+    serviceCategory = 'Major Service'
+    drivers.push('Dual-mass flywheel replacement can add R5,000–R15,000')
+    drivers.push('Labour-intensive job — front-wheel drive vehicles may cost more')
+  } else if (has('suspension') || has('shock') || has('strut')) {
+    labor = [2, 5]
+    parts = [2000, 8000]
+    service = 'Suspension repair or replacement'
+    serviceCategory = 'Repair'
+    drivers.push('Alignment required after suspension work (R450–R800 extra)')
+    drivers.push('Worn bushings and ball joints may need attention simultaneously')
+  } else if (has('steering') || has('power steering')) {
+    labor = [2, 5]
+    parts = [1500, 7000]
+    service = 'Steering system repair'
+    serviceCategory = 'Repair'
+    drivers.push('Power steering pump or rack replacement is more expensive')
+  } else if (has('timing') || has('cambelt') || has('timing belt') || has('timing chain')) {
+    labor = [4, 8]
+    parts = [2500, 9000]
+    service = 'Timing belt/chain replacement'
+    serviceCategory = 'Major Service'
+    drivers.push('Water pump typically replaced at the same time')
+    drivers.push('Interference engines risk catastrophic damage if belt snaps')
+  } else if (has('turbo') || has('turbocharger')) {
+    labor = [4, 8]
+    parts = [8000, 35000]
+    service = 'Turbocharger repair or replacement'
+    serviceCategory = 'Repair'
+    urgency = 'high'
+    drivers.push('Remanufactured turbos cost less than new OEM units')
+    drivers.push('Oil supply issues must be resolved to prevent repeat failure')
+  } else if (has('gearbox') || has('transmission')) {
+    labor = [6, 14]
+    parts = [5000, 35000]
+    service = 'Gearbox / transmission repair'
+    serviceCategory = 'Repair'
+    drivers.push('Rebuild vs replacement significantly affects cost')
+    drivers.push('Automatic transmissions typically cost more than manual')
   } else if (has('engine') || has('misfire') || has('smoke')) {
-    labor = [2, 7]
-    parts = [90, 550]
+    labor = [2, 8]
+    parts = [1500, 15000]
     service = 'Engine diagnostic and repair'
+    serviceCategory = 'Diagnosis'
     urgency = has('smoke') ? 'high' : 'medium'
-    drivers.push('Further testing may uncover ignition, fuel, or mechanical issues')
+    drivers.push('Scope of repair depends on diagnostic scan and compression test results')
+    drivers.push('Head gasket failure significantly increases cost (R8,000–R25,000 total)')
+  } else if (has('major service')) {
+    labor = [3, 5]
+    parts = [2000, 6000]
+    service = 'Major Service'
+    serviceCategory = 'Major Service'
+    urgency = 'low'
+    drivers.push('Includes oil, all filters, spark plugs, and comprehensive inspection')
+    drivers.push('Additional fluid changes (brake, coolant, transmission) may increase cost')
+  } else if (has('service') || has('oil') || has('minor service')) {
+    labor = [1, 2]
+    parts = [800, 2500]
+    service = 'Minor Service (Oil & Filter)'
+    serviceCategory = 'Minor Service'
+    urgency = 'low'
+    drivers.push('Oil type (mineral vs synthetic) affects cost')
+    drivers.push('Additional filters (air, cabin, fuel) add R200–R800 each')
+  } else if (has('exhaust') || has('catalytic') || has('cat')) {
+    labor = [2, 5]
+    parts = [3000, 25000]
+    service = 'Exhaust system repair'
+    serviceCategory = 'Repair'
+    drivers.push('Catalytic converter replacement is the most expensive exhaust component')
+  } else if (has('aircon') || has('air con') || has('ac') || has('a/c')) {
+    labor = [2, 5]
+    parts = [1500, 8000]
+    service = 'Air conditioning system repair'
+    serviceCategory = 'Repair'
+    drivers.push('Compressor replacement is the most expensive A/C repair')
+    drivers.push('Re-gas only costs R600–R1,200')
   }
 
+  // If workshop has matching parts in stock, factor their prices in
   const avgListedPart = (availableParts || [])
     .filter((p) => Number(p.unit_price || 0) > 0)
     .slice(0, 5)
@@ -945,12 +1128,12 @@ function fallbackRepairCostEstimate(symptoms, vehicleDetails = {}, availablePart
     parts = [parts[0], Math.max(parts[1], Math.round(avgListedPart * 2))]
   }
 
-  const laborRate = 45
   const totalMin = Math.round(labor[0] * laborRate + parts[0])
   const totalMax = Math.round(labor[1] * laborRate + parts[1])
 
   return {
     likely_service: service,
+    service_category: serviceCategory,
     urgency,
     estimated_labor_hours_min: labor[0],
     estimated_labor_hours_max: labor[1],
@@ -960,11 +1143,14 @@ function fallbackRepairCostEstimate(symptoms, vehicleDetails = {}, availablePart
     estimated_total_cost_max: totalMax,
     cost_drivers: drivers,
     assumptions: [
-      'Estimate is pre-inspection and may change after teardown or scanning.',
-      'Pricing assumes standard aftermarket parts and normal labor access.',
-      'Taxes, specialist machining, and towing are excluded.',
+      'All prices are in South African Rand (ZAR) and reflect current market rates.',
+      'Labor rate based on average SA independent workshop rate of R650/hr.',
+      'Parts pricing based on aftermarket supplier rates (Midas, AutoZone, Goldwagen).',
+      'OEM/dealer parts may cost 30-80% more than aftermarket alternatives.',
+      'Estimate is pre-inspection and may change after teardown or diagnostic scanning.',
+      'VAT (15%) is included in the estimate.',
     ],
-    recommended_next_step: 'Confirm the fault with inspection, then convert the range into an approved quote.',
+    recommended_next_step: 'Confirm the fault with a physical inspection, then convert the estimate into an approved quote for the customer.',
   }
 }
 
@@ -1112,5 +1298,59 @@ function fallbackStockForecast(parts = [], orders = []) {
       'Restock any parts flagged as critical.',
       'Verify reorder levels are set for all parts.',
     ],
+  }
+}
+
+function fallbackCarValuation(vehicleDetails = {}) {
+  const year = Number(vehicleDetails.year || new Date().getFullYear())
+  const currentYear = new Date().getFullYear()
+  const age = Math.max(currentYear - year, 0)
+  const mileage = Number(vehicleDetails.mileage || 80000)
+  const condition = String(vehicleDetails.condition || 'Good').toLowerCase()
+
+  // Base value heuristic for South African market
+  let baseValue = 250000
+  if (age <= 1) baseValue = 350000
+  else if (age <= 3) baseValue = 280000
+  else if (age <= 5) baseValue = 220000
+  else if (age <= 8) baseValue = 160000
+  else if (age <= 12) baseValue = 100000
+  else baseValue = 60000
+
+  // Condition modifier
+  const conditionMod = condition === 'excellent' ? 1.15 : condition === 'good' ? 1.0 : condition === 'fair' ? 0.85 : 0.65
+  baseValue = Math.round(baseValue * conditionMod)
+
+  // Mileage modifier (penalize high mileage)
+  if (mileage > 200000) baseValue = Math.round(baseValue * 0.75)
+  else if (mileage > 150000) baseValue = Math.round(baseValue * 0.85)
+  else if (mileage > 100000) baseValue = Math.round(baseValue * 0.92)
+
+  const min = Math.round(baseValue * 0.85)
+  const max = Math.round(baseValue * 1.15)
+  const tradeIn = Math.round(baseValue * 0.78)
+  const privateSale = Math.round(baseValue * 1.08)
+
+  return {
+    estimated_value_min: min,
+    estimated_value_max: max,
+    fair_market_value: baseValue,
+    trade_in_value: tradeIn,
+    private_sale_value: privateSale,
+    condition_rating: vehicleDetails.condition || 'Good',
+    confidence_score: 0.45,
+    value_factors: [
+      { factor: 'Vehicle Age', impact: age <= 3 ? 'positive' : 'negative', amount_zar: age * 8000, explanation: `${age} year(s) old — ${age <= 3 ? 'relatively new' : 'depreciation applied'}` },
+      { factor: 'Mileage', impact: mileage <= 100000 ? 'positive' : 'negative', amount_zar: Math.round(mileage * 0.15), explanation: `${mileage.toLocaleString()} km on the odometer` },
+      { factor: 'Overall Condition', impact: conditionMod >= 1 ? 'positive' : 'negative', amount_zar: Math.round(Math.abs(1 - conditionMod) * baseValue), explanation: `Condition rated as ${vehicleDetails.condition || 'Good'}` },
+    ],
+    market_comparison: 'Estimate based on general South African market averages. For a more precise valuation, AI analysis with vehicle photos is recommended.',
+    depreciation_notes: `Vehicles typically depreciate 15-20% in the first year and 10-15% per year thereafter in the South African market.`,
+    recommendations: [
+      'Keep full service history to maximize resale value.',
+      'Address any cosmetic damage before selling.',
+      'Consider timing — demand is typically higher in January and July.',
+    ],
+    photo_observations: null,
   }
 }

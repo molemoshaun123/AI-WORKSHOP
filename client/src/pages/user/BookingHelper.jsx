@@ -8,7 +8,7 @@ export default function BookingHelper({ vehicles }) {
     {
       role: 'assistant',
       text:
-        'Tell me what you need and I will guide you to the best booking option (estimate or direct booking).',
+        'Tell me what you need and I will guide you to the best booking option.',
     },
   ])
   const [input, setInput] = useState('')
@@ -49,12 +49,12 @@ export default function BookingHelper({ vehicles }) {
         ...prev,
         {
           role: 'assistant',
-          text: data?.reply || 'Open Repair Estimate to continue booking.',
+          text: data?.reply || 'Head to Book Service to continue.',
         },
       ])
 
       if (data?.suggested_route === '/user/estimate') {
-        setTimeout(() => navigate('/user/estimate'), 400)
+        setTimeout(() => navigate('/user/service'), 400)
       }
       if (data?.suggested_route === '/user/service') {
         setTimeout(() => navigate('/user/service'), 400)
@@ -62,7 +62,7 @@ export default function BookingHelper({ vehicles }) {
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { role: 'assistant', text: 'I could not generate a suggestion. Please use Repair Estimate to book.' },
+        { role: 'assistant', text: 'I could not generate a suggestion. Please use Book Service to continue.' },
       ])
     } finally {
       setLoading(false)

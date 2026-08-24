@@ -5,6 +5,11 @@ import api from '../../../services/api'
 import JobContextPanel from './JobContextPanel'
 
 
+function formatZAR(val) {
+  if (val == null || val === '-' || isNaN(val)) return String(val ?? '-')
+  return 'R ' + Number(val).toLocaleString('en-ZA')
+}
+
 export default function RepairCostEstimator() {
   const [symptoms, setSymptoms] = useState('')
   const [vehicle, setVehicle] = useState({ make: '', model: '', year: '', mileage: '' })
@@ -77,12 +82,23 @@ export default function RepairCostEstimator() {
                 <div className="rounded-[2rem] border border-white/10 bg-slate-950/30 p-6">
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Likely Service</p>
                   <p className="mt-2 text-lg font-black text-white">{result.likely_service || '-'}</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-400">Urgency: {result.urgency || '-'}</p>
+                  <div className="mt-3 flex items-center gap-2">
+                    {result.service_category && (
+                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                        result.service_category === 'Minor Service' ? 'bg-blue-500/10 text-blue-400' :
+                        result.service_category === 'Major Service' ? 'bg-amber-500/10 text-amber-400' :
+                        'bg-slate-500/10 text-slate-400'
+                      }`}>
+                        {result.service_category}
+                      </span>
+                    )}
+                    <p className="text-sm font-semibold text-slate-400">Urgency: {result.urgency || '-'}</p>
+                  </div>
                 </div>
                 <div className="rounded-[2rem] border border-emerald-500/20 bg-emerald-500/10 p-6">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300">Estimated Total</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300">Estimated Total (ZAR)</p>
                   <p className="mt-2 text-2xl font-black text-white">
-                    {result.estimated_total_cost_min ?? '-'} - {result.estimated_total_cost_max ?? '-'}
+                    {formatZAR(result.estimated_total_cost_min)} – {formatZAR(result.estimated_total_cost_max)}
                   </p>
                 </div>
               </div>
@@ -93,8 +109,8 @@ export default function RepairCostEstimator() {
                   <p className="mt-2 text-lg font-black text-white">{result.estimated_labor_hours_min ?? '-'}h - {result.estimated_labor_hours_max ?? '-'}h</p>
                 </div>
                 <div className="rounded-[2rem] border border-white/10 bg-slate-950/30 p-6">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Parts</p>
-                  <p className="mt-2 text-lg font-black text-white">{result.estimated_parts_cost_min ?? '-'} - {result.estimated_parts_cost_max ?? '-'}</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Parts (ZAR)</p>
+                  <p className="mt-2 text-lg font-black text-white">{formatZAR(result.estimated_parts_cost_min)} – {formatZAR(result.estimated_parts_cost_max)}</p>
                 </div>
               </div>
 

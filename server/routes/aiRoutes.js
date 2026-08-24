@@ -14,6 +14,7 @@ const {
   carChat,
   analyzeAudio,
   forecastStock,
+  estimateCarValue,
 } = require("../services/geminiService");
 
 router.post("/diagnose", async (req, res) => {
@@ -286,6 +287,30 @@ router.post("/stock-forecast", async (req, res) => {
   } catch (error) {
     console.error('Stock forecast error:', error.message)
     res.status(500).json({ success: false, message: 'Failed to generate stock forecast' })
+  }
+})
+
+router.post("/car-valuation", async (req, res) => {
+  try {
+    const { vehicleDetails, images } = req.body || {}
+    if (!vehicleDetails || (!vehicleDetails.make && !vehicleDetails.model)) {
+      return res.status(400).json({ success: false, message: 'Vehicle make and model are required' })
+    }
+
+    const result = await estimateCarValue(vehicleDetails, images || [])
+
+    let valuation = {}
+    try {
+      valuation = typeof result === 'string' ? JSON.parse(result.replace(/```json|```/g, '').trim()) : result
+    } catch (e) {
+      console.error('Failed to parse car valuation response:', e.message)
+      valuation = { fair_market_value: 0, confidence_score: 0, raw: result }
+    }
+
+    res.status(200).json({ success: true, valuation })
+  } catch (error) {
+    console.error('Car valuation error:', error.message)
+    res.status(500).json({ success: false, message: 'Failed to estimate car value' })
   }
 })
 

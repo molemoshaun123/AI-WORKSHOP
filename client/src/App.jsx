@@ -29,7 +29,7 @@ const SupplierMarketplace = lazy(() => import('./pages/admin/ai/SupplierMarketpl
 const VehicleForm = lazy(() => import('./pages/user/VehicleForm'))
 const ServiceRequest = lazy(() => import('./pages/user/ServiceRequest'))
 const DiagnosisPage = lazy(() => import('./pages/user/DiagnosisPage'))
-const RepairEstimate = lazy(() => import('./pages/user/RepairEstimate'))
+const CarValuator = lazy(() => import('./pages/user/RepairEstimate'))
 const InvoicePage = lazy(() => import('./pages/user/InvoicePage'))
 const Inbox = lazy(() => import('./pages/Inbox'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
@@ -142,10 +142,10 @@ export default function App() {
           }
         />
         <Route
-          path="/user/estimate"
+          path="/user/car-value"
           element={
             <RequireUser>
-              <RepairEstimate />
+              <CarValuator />
             </RequireUser>
           }
         />

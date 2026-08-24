@@ -45,7 +45,7 @@ export default function AppLayout({ title, children }) {
     { name: 'Dashboard', path: '/user/dashboard', badge: 'DB' },
     { name: 'My Vehicles', path: '/user/vehicle', badge: 'VH' },
     { name: 'Book Service', path: '/user/service', badge: 'BK' },
-    { name: 'Repair Estimate', path: '/user/estimate', badge: 'ET' },
+    { name: 'Car Value', path: '/user/car-value', badge: 'CV' },
     { name: 'Messages', path: '/inbox', badge: 'MS' },
   ]
 

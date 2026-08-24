@@ -319,7 +319,7 @@ export default function Home() {
               {[
                 'Create an account and save vehicle details',
                 'Submit service requests and symptoms easily',
-                'See repair progress and estimate support',
+                'Estimate your car\'s market value with AI',
                 'Stay connected with the workshop through messages',
               ].map((item) => (
                 <div key={item} className="flex items-start gap-3 rounded-2xl bg-white/[0.03] p-4">
