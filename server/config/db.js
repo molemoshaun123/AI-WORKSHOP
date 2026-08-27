@@ -10,6 +10,10 @@ const pool = new Pool({
   ssl: process.env.DB_HOST !== 'localhost' ? { rejectUnauthorized: false } : false,
 });
 
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle client', err);
+});
+
 pool
   .connect()
   .then(async () => {
