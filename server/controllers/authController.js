@@ -159,7 +159,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       { user_id: user.user_id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: '30d' }
     )
 
     res.json({
@@ -213,7 +213,7 @@ const loginAdmin = async (req, res) => {
     const token = jwt.sign(
       { user_id: admin.user_id, role: admin.role },
       process.env.JWT_SECRET,
-      { expiresIn: '1d' }
+      { expiresIn: '30d' }
     )
 
     res.json({

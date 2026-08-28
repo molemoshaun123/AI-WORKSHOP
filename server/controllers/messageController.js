@@ -23,6 +23,13 @@ const getMessages = async (req, res) => {
        ORDER BY created_at ASC`,
       [user_id, other_id]
     )
+
+    await pool.query(
+      `UPDATE messages SET is_read = TRUE 
+       WHERE receiver_id = $1 AND sender_id = $2 AND is_read = FALSE`,
+      [user_id, other_id]
+    )
+
     res.json(result.rows)
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch messages', error: error.message })

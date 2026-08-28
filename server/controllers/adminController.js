@@ -23,7 +23,7 @@ const getMetrics = async (req, res) => {
          ORDER BY j.created_at DESC
          LIMIT 10`
       ),
-      pool.query('SELECT COUNT(*)::int AS total FROM public.messages WHERE is_read = FALSE'),
+      pool.query('SELECT COUNT(*)::int AS total FROM public.messages WHERE receiver_id = $1 AND is_read = FALSE', [req.user.user_id]),
       pool.query('SELECT COUNT(*)::int AS total FROM public.parts WHERE quantity <= COALESCE(reorder_level, 0)'),
       pool.query(
         `SELECT COUNT(*)::int AS total

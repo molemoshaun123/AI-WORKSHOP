@@ -98,7 +98,11 @@ const getUserActionItems = async (req, res) => {
        WHERE j.user_id = $1 AND i.status = 'unpaid' ORDER BY i.created_at DESC`,
       [user_id]
     )
-    res.json({ pendingQuotes: quotes.rows, unpaidInvoices: invoices.rows })
+    const unreadMessages = await pool.query(
+      'SELECT COUNT(*)::int AS total FROM public.messages WHERE receiver_id = $1 AND is_read = FALSE',
+      [user_id]
+    )
+    res.json({ pendingQuotes: quotes.rows, unpaidInvoices: invoices.rows, unreadMessages: unreadMessages.rows[0].total })
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch action items', error: error.message })
   }

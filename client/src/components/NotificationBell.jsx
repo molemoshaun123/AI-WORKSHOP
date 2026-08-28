@@ -42,6 +42,9 @@ export default function NotificationBell({ userId, isAdmin = false }) {
           if (data.unpaidInvoices?.length > 0) {
             items.push({ id: 'invoices', text: `${data.unpaidInvoices.length} unpaid invoice${data.unpaidInvoices.length > 1 ? 's' : ''}`, type: 'danger' })
           }
+          if (data.unreadMessages > 0) {
+            items.push({ id: 'msgs', text: `${data.unreadMessages} unread message${data.unreadMessages > 1 ? 's' : ''}`, type: 'info' })
+          }
         } catch {}
       }
 

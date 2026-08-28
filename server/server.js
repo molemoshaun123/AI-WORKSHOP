@@ -13,6 +13,7 @@ const adminRoutes = require('./routes/adminRoutes')
 const inventoryRoutes = require('./routes/inventoryRoutes')
 const supplierRoutes = require('./routes/supplierRoutes')
 const financeRoutes = require('./routes/financeRoutes')
+const { verifyToken, verifyAdmin } = require('./middleware/authMiddleware')
 
 const app = express()
 
@@ -45,15 +46,15 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/auth', authRoutes)
-app.use('/api/vehicles', vehicleRoutes)
-app.use('/api/jobs', jobRoutes)
-app.use('/api/images', imageRoutes)
-app.use('/api/messages', messageRoutes)
-app.use('/api/ai', aiLimiter, aiRoutes)
-app.use('/api/admin', adminRoutes)
-app.use('/api/inventory', inventoryRoutes)
-app.use('/api/inventory', supplierRoutes)
-app.use('/api/finance', financeRoutes)
+app.use('/api/vehicles', verifyToken, vehicleRoutes)
+app.use('/api/jobs', verifyToken, jobRoutes)
+app.use('/api/images', verifyToken, imageRoutes)
+app.use('/api/messages', verifyToken, messageRoutes)
+app.use('/api/ai', verifyToken, aiLimiter, aiRoutes)
+app.use('/api/admin', verifyToken, verifyAdmin, adminRoutes)
+app.use('/api/inventory', verifyToken, verifyAdmin, inventoryRoutes)
+app.use('/api/inventory', verifyToken, verifyAdmin, supplierRoutes)
+app.use('/api/finance', verifyToken, financeRoutes)
 
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
