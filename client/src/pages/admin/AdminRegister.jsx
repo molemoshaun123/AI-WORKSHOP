@@ -8,14 +8,15 @@ import { Wrench } from 'lucide-react'
 import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
 
-const nameRegex = /^(?=.*[A-Za-z])[A-Za-z][A-Za-z\s'-]*$/
+const nameRegex = /^[A-Za-z][A-Za-z\s'-]* [A-Za-z][A-Za-z\s'-]*$/
 const saPhoneRegex = /^0\d{9}$/
 const strongPasswordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/
 const normalizeName = (value) => String(value || '').toLowerCase().replace(/[^a-z]/g, '')
 
 const adminRegisterSchema = z.object({
-  full_name: z.string().min(2, 'Full name must be at least 2 characters').regex(nameRegex, 'Full name must contain letters only (no numbers)'),
-  email: z.string().email('Enter a valid email address').refine((val) => /[A-Za-z]/.test(val), 'Enter a valid email address'),
+  full_name: z.string().min(2, 'Full name must be at least 2 characters').regex(nameRegex, 'Please enter a proper full name (first and last name) with letters only'),
+  email: z.string().email('Enter a valid email address')
+    .refine((val) => /[A-Za-z]/.test(val.split('@')[0]), 'Email cannot be numbers only. Please use a real email address.'),
   phone: z.string().optional().refine((val) => !val || saPhoneRegex.test(val), 'Use a valid South African 10-digit number (e.g. 0821234567)'),
   pin: z.string().optional(),
   password: z.string().regex(

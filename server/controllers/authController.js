@@ -7,9 +7,8 @@ require('dotenv').config()
 
 const normalizeEmail = (email) => String(email || '').trim().toLowerCase()
 const normalizePhone = (phone) => String(phone || '').trim()
-const NAME_REGEX = /^(?=.*[A-Za-z])[A-Za-z][A-Za-z\s'-]*$/
+const NAME_REGEX = /^[A-Za-z][A-Za-z\s'-]* [A-Za-z][A-Za-z\s'-]*$/
 const SA_PHONE_REGEX = /^0\d{9}$/
-const EMAIL_LETTER_REGEX = /[A-Za-z]/
 const STRONG_PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/
 const normalizeName = (name) => String(name || '').toLowerCase().replace(/[^a-z]/g, '')
 
@@ -23,10 +22,11 @@ const validateRegistrationFields = ({ full_name, email, phone, password }) => {
     return { error: 'Full name, email, and password are required' }
   }
   if (!NAME_REGEX.test(cleanName)) {
-    return { error: 'Full name must contain letters only (no numbers)' }
+    return { error: 'Please enter a proper full name (first and last name) with letters only' }
   }
-  if (!EMAIL_LETTER_REGEX.test(normalizedEmail) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
-    return { error: 'Enter a valid email address' }
+  const emailLocalPart = normalizedEmail.split('@')[0] || ''
+  if (!/[A-Za-z]/.test(emailLocalPart) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    return { error: 'Email cannot be numbers only. Please use a real email address.' }
   }
   if (cleanPhone && !SA_PHONE_REGEX.test(cleanPhone)) {
     return { error: 'Phone number must be a valid South African 10-digit number (e.g. 0821234567)' }
@@ -353,7 +353,7 @@ async function updateProfile(req, res) {
     if (full_name) {
       const cleanName = String(full_name).trim()
       if (!NAME_REGEX.test(cleanName)) {
-        return res.status(400).json({ message: 'Full name must contain letters only' })
+        return res.status(400).json({ message: 'Please enter a proper full name (first and last name) with letters only' })
       }
       updates.push(`full_name = $${idx++}`)
       values.push(cleanName)
@@ -370,8 +370,9 @@ async function updateProfile(req, res) {
 
     if (email) {
       const normalizedEmail = normalizeEmail(email)
-      if (!EMAIL_LETTER_REGEX.test(normalizedEmail) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
-        return res.status(400).json({ message: 'Enter a valid email address' })
+      const emailLocalPart = normalizedEmail.split('@')[0] || ''
+      if (!/[A-Za-z]/.test(emailLocalPart) || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+        return res.status(400).json({ message: 'Email cannot be numbers only. Please use a real email address.' })
       }
       // Check unique
       const existing = await pool.query(
