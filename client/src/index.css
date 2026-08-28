@@ -9,6 +9,12 @@ body,
   min-height: 100%;
   width: 100%;
   font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Smooth scrolling + safe area padding for notched phones */
+html {
+  scroll-behavior: smooth;
 }
 
 /* Default page background + text (cyan/blue glow + dark slate base) */
@@ -18,10 +24,12 @@ body {
     radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.08), transparent 24%),
     #020617;
   color: white;
+  overscroll-behavior-y: contain;
 }
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 a {
@@ -43,3 +51,14 @@ select {
 button {
   cursor: pointer;
 }
+
+/* Safe-area padding for mobile bottom nav (iPhones with home indicator) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Prevent horizontal overflow on mobile */
+.overflow-x-clip {
+  overflow-x: clip;
+}
+

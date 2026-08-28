@@ -150,7 +150,7 @@ export default function UserLayout({ title, children }) {
       </nav>
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:py-8 md:pb-8 lg:py-12">
         {/* Page Title Header */}
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-3xl font-black tracking-tight text-slate-900">{title}</h2>

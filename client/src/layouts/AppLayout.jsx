@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import NotificationBell from '../components/NotificationBell'
+import { Menu, X } from 'lucide-react'
 
 /* Sidebar nav icon chip colours */
 function NavBadge({ label }) {
@@ -12,6 +13,7 @@ function NavBadge({ label }) {
 }
 
 export default function AppLayout({ title, children }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const user = JSON.parse(localStorage.getItem('user') || localStorage.getItem('adminUser') || 'null')
@@ -41,6 +43,11 @@ export default function AppLayout({ title, children }) {
     }
   }, [isAdmin, isAuthPage, location.pathname, navigate, user])
 
+  // Close sidebar on route change
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [location.pathname])
+
   const userNav = [
     { name: 'Dashboard', path: '/user/dashboard', badge: 'DB' },
     { name: 'My Vehicles', path: '/user/vehicle', badge: 'VH' },
@@ -68,8 +75,17 @@ export default function AppLayout({ title, children }) {
   /* Dashboard + portal shell: sidebar, main area, header, decorative glows */
   return (
     <div className="min-h-screen bg-slate-950 text-white lg:flex">
-      <aside className="border-b border-white/5 bg-slate-900/60 backdrop-blur-xl lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:border-b-0 lg:border-r">
-        <div className="p-6 lg:p-8">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 border-r border-white/5 bg-slate-900/95 backdrop-blur-xl transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div className="flex items-center justify-between p-6 lg:p-8">
           <Link to="/" className="group flex items-center gap-3">
             {/* Brand mark: cyan → blue gradient */}
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 font-bold text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.3)] transition-transform group-hover:scale-105">
@@ -80,6 +96,12 @@ export default function AppLayout({ title, children }) {
               <h1 className="text-xl font-black tracking-tight">AUTO TUNE</h1>
             </div>
           </Link>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white lg:hidden"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
         <div className="px-4 pb-4 lg:px-4">
@@ -89,7 +111,7 @@ export default function AppLayout({ title, children }) {
         </div>
 
         {/* Nav links: inactive slate vs active cyan/blue gradient strip */}
-        <nav className="grid gap-2 px-4 pb-4 md:grid-cols-2 lg:grid-cols-1">
+        <nav className="grid gap-2 px-4 pb-4">
           {navItems.map((item) => {
             const isDashboard = item.path === '/admin/dashboard' || item.path === '/user/dashboard'
             const active = isDashboard ? location.pathname === item.path : location.pathname.startsWith(item.path)
@@ -133,16 +155,24 @@ export default function AppLayout({ title, children }) {
         </div>
       </aside>
 
-      <div className="relative h-screen flex-1 overflow-auto">
+      <div className="relative min-h-screen flex-1 overflow-auto lg:h-screen">
         {/* Main content area: soft blue/cyan background glows */}
         <div className="absolute right-0 top-0 -z-10 h-96 w-96 bg-blue-600/10 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 -z-10 h-96 w-96 bg-cyan-400/5 blur-3xl"></div>
 
         {/* Top bar on each dashboard page */}
-        <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/5 bg-slate-950/60 px-6 py-5 backdrop-blur-md lg:px-10">
-          <div>
-            <h2 className="text-2xl font-black tracking-tight">{title}</h2>
-            <p className="mt-1 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">System online</p>
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/5 bg-slate-950/60 px-4 py-4 backdrop-blur-md sm:px-6 sm:py-5 lg:px-10">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10 lg:hidden"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <div>
+              <h2 className="text-xl font-black tracking-tight sm:text-2xl">{title}</h2>
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-500 sm:mt-1 sm:text-xs">System online</p>
+            </div>
           </div>
           <div className="flex items-center gap-6">
             <NotificationBell />
@@ -156,7 +186,7 @@ export default function AppLayout({ title, children }) {
           </div>
         </header>
 
-        <main className="mx-auto max-w-7xl p-6 lg:p-10">{children}</main>
+        <main className="mx-auto max-w-7xl p-4 pb-8 sm:p-6 lg:p-10">{children}</main>
       </div>
     </div>
   )

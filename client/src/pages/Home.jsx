@@ -74,18 +74,18 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hidden items-center gap-3 sm:flex">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               to="/user/login"
-              className="rounded-2xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-bold transition duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-lg"
+              className="rounded-xl sm:rounded-2xl border border-white/10 bg-white/5 px-3 py-2 text-xs sm:px-5 sm:py-2.5 sm:text-sm font-bold transition duration-300 hover:-translate-y-0.5 hover:bg-white/10 hover:shadow-lg"
             >
               User Login
             </Link>
             <Link
               to="/admin/login"
-              className="rounded-2xl bg-cyan-400 px-5 py-2.5 text-sm font-black text-slate-950 shadow-[0_0_24px_rgba(34,211,238,0.25)] transition duration-300 hover:-translate-y-0.5 hover:scale-[1.02] hover:bg-cyan-300"
+              className="rounded-xl sm:rounded-2xl bg-cyan-400 px-3 py-2 text-xs sm:px-5 sm:py-2.5 sm:text-sm font-black text-slate-950 shadow-[0_0_24px_rgba(34,211,238,0.25)] transition duration-300 hover:-translate-y-0.5 hover:scale-[1.02] hover:bg-cyan-300"
             >
-              Workshop Login
+              Workshop
             </Link>
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function Home() {
               Smart workshop operating system
             </div>
 
-            <h2 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+            <h2 className="max-w-4xl text-3xl font-black leading-[0.95] tracking-tight sm:text-5xl lg:text-7xl">
               Modern vehicle service,
               <span className="block bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500 bg-clip-text text-transparent">
                 from first booking to final handover.
