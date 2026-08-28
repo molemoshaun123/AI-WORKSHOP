@@ -24,7 +24,7 @@ export default function Inbox() {
 
   useEffect(() => {
     loadConversations()
-    loadStaff()
+    loadContacts()
   }, [])
 
   useEffect(() => {
@@ -48,10 +48,17 @@ export default function Inbox() {
     }
   }
 
-  const loadStaff = async () => {
+  const loadContacts = async () => {
     try {
-      const res = await api.get('/admin/staff')
-      setStaff(res.data)
+      if (isAdmin) {
+        // Admin wants to message customers (users)
+        const res = await api.get('/admin/customers')
+        setStaff(res.data.map(c => ({ user_id: c.user_id, full_name: c.full_name, role: c.role || 'user' })))
+      } else {
+        // User wants to message workshop staff (admins)
+        const res = await api.get('/admin/staff')
+        setStaff(res.data)
+      }
     } catch (err) {
       setStaff([])
     }
@@ -79,11 +86,7 @@ export default function Inbox() {
       })
       setNewMessage('')
       loadMessages()
-      
-      // Simulate typing indicator for better UX in absence of websockets
-      setIsTyping(true)
-      setTimeout(() => setIsTyping(false), 3000)
-      
+      loadConversations() // Refresh conversations so new chats appear
     } catch (err) {
       toast.error('Failed to send message')
     }
@@ -109,9 +112,9 @@ export default function Inbox() {
 
   return (
     <Layout title="Messages">
-      <div className={`rounded-[2.5rem] border overflow-hidden flex h-[70vh] ${theme.container}`}>
-        {/* Contacts Sidebar */}
-        <div className={`w-80 border-r flex flex-col ${theme.sidebarBorder}`}>
+      <div className={`rounded-2xl sm:rounded-[2.5rem] border overflow-hidden flex flex-col md:flex-row h-[80vh] md:h-[70vh] ${theme.container}`}>
+        {/* Contacts Sidebar - hidden on mobile when a chat is active */}
+        <div className={`${activeChat ? 'hidden md:flex' : 'flex'} w-full md:w-80 border-b md:border-b-0 md:border-r flex-col ${theme.sidebarBorder}`}>
           <div className={`p-6 border-b ${theme.sidebarBorder} ${theme.headerBg}`}>
             <h3 className="font-black text-xl tracking-tight">Chats</h3>
           </div>
@@ -181,11 +184,17 @@ export default function Inbox() {
           </div>
         </div>
 
-        {/* Chat Area */}
-        <div className={`flex-1 flex flex-col ${theme.chatAreaBg}`}>
+        {/* Chat Area - hidden on mobile when no chat is active */}
+        <div className={`${activeChat ? 'flex' : 'hidden md:flex'} flex-1 flex-col ${theme.chatAreaBg}`}>
           {activeChat ? (
             <>
-              <div className={`p-6 border-b flex items-center gap-4 ${theme.sidebarBorder} ${theme.headerBg}`}>
+              <div className={`p-4 sm:p-6 border-b flex items-center gap-3 sm:gap-4 ${theme.sidebarBorder} ${theme.headerBg}`}>
+                <button
+                  onClick={() => setActiveChat(null)}
+                  className={`md:hidden flex h-9 w-9 items-center justify-center rounded-xl border ${isAdmin ? 'border-white/10 text-slate-300 hover:bg-white/10' : 'border-slate-200 text-slate-500 hover:bg-slate-100'}`}
+                >
+                  ←
+                </button>
                 <div className={`h-10 w-10 rounded-full flex items-center justify-center font-bold ${theme.activeChatAvatarBg}`}>
                   {activeChat.full_name.charAt(0)}
                 </div>
@@ -195,7 +204,7 @@ export default function Inbox() {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-8 space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-4">
                 {messages.map((msg) => (
                   <div
                     key={msg.message_id}
