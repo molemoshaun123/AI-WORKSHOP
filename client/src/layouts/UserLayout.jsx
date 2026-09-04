@@ -60,8 +60,8 @@ export default function UserLayout({ title, children }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white font-black shadow-lg shadow-blue-500/30 transition-transform group-hover:scale-105">
+            <Link to="/user/dashboard" className="flex items-center gap-3 group">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-black shadow-lg shadow-blue-500/30 transition-transform group-hover:scale-105">
                 K
               </div>
               <div>
@@ -120,12 +120,12 @@ export default function UserLayout({ title, children }) {
 
       {/* Mobile Top Bar (Logo & Profile only) */}
       <header className="md:hidden sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm px-4 flex justify-between items-center h-14">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-black shadow-md">
+        <Link to="/user/dashboard" className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-black shadow-md">
             K
           </div>
           <div>
-            <h1 className="text-lg font-black tracking-tight text-slate-900 leading-none">Auto Tune</h1>
+            <h1 className="text-lg font-black tracking-tight text-slate-900 leading-none">Customer Portal</h1>
           </div>
         </Link>
         <div className="flex gap-2 items-center">
