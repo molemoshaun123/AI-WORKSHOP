@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import UserLayout from '../../layouts/UserLayout'
 import api from '../../services/api'
 
 export default function ServiceRequest() {
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const { user } = useAuth()
   const [form, setForm] = useState({
     user_id: user?.user_id || 1,
     vehicle_id: '',

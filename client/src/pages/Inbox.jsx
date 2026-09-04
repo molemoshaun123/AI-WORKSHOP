@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
+import { useAuth } from '../context/AuthContext'
 import AppLayout from '../layouts/AppLayout'
 import UserLayout from '../layouts/UserLayout'
 import api from '../services/api'
 
 export default function Inbox() {
-  const user = JSON.parse(localStorage.getItem('user') || localStorage.getItem('adminUser') || 'null')
-  const isAdmin = !!localStorage.getItem('adminUser') || user?.role === 'admin'
+  const { user, admin, isAdmin } = useAuth()
+  const activeUser = admin || user
   const Layout = isAdmin ? AppLayout : UserLayout
 
   const [conversations, setConversations] = useState([])
@@ -41,7 +42,7 @@ export default function Inbox() {
 
   const loadConversations = async () => {
     try {
-      const res = await api.get(`/messages/conversations/${user.user_id}`)
+      const res = await api.get(`/messages/conversations/${activeUser.user_id}`)
       setConversations(res.data)
     } catch (err) {
       console.error('Failed to load conversations')
@@ -67,7 +68,7 @@ export default function Inbox() {
   const loadMessages = async () => {
     if (!activeChat) return
     try {
-      const res = await api.get(`/messages/${user.user_id}/${activeChat.other_id}`)
+      const res = await api.get(`/messages/${activeUser.user_id}/${activeChat.other_id}`)
       setMessages(res.data)
     } catch (err) {
       console.error('Failed to load messages')
@@ -80,7 +81,7 @@ export default function Inbox() {
 
     try {
       await api.post('/messages', {
-        sender_id: user.user_id,
+        sender_id: activeUser.user_id,
         receiver_id: activeChat.other_id,
         content: newMessage
       })
@@ -208,17 +209,17 @@ export default function Inbox() {
                 {messages.map((msg) => (
                   <div
                     key={msg.message_id}
-                    className={`flex ${msg.sender_id === user.user_id ? 'justify-end' : 'justify-start'}`}
+                    className={`flex ${msg.sender_id === activeUser.user_id ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
                       className={`max-w-[70%] p-4 rounded-[1.5rem] text-sm font-medium shadow-sm border ${
-                        msg.sender_id === user.user_id
+                        msg.sender_id === activeUser.user_id
                           ? `${theme.msgUserBg} rounded-tr-none border-transparent`
                           : `${theme.msgOtherBg} rounded-tl-none`
                       }`}
                     >
                       {msg.content}
-                      <p className={`text-[8px] mt-2 opacity-50 ${msg.sender_id === user.user_id ? 'text-right' : 'text-left'}`}>
+                      <p className={`text-[8px] mt-2 opacity-50 ${msg.sender_id === activeUser.user_id ? 'text-right' : 'text-left'}`}>
                         {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>

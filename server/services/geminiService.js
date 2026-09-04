@@ -677,19 +677,25 @@ Vehicle details:
 - Transmission: ${vehicleDetails.transmission || 'Unknown'}
 - Fuel Type: ${vehicleDetails.fuel_type || 'Unknown'}
 - Province: ${vehicleDetails.province || 'Unknown'}
+- Original Purchase Price: ${vehicleDetails.original_price ? 'R ' + vehicleDetails.original_price : 'Unknown (Please estimate the original new retail price for this year/model)'}
 
 ${hasImages ? 'Photos of the vehicle have been provided. Analyze the visual condition of the car from the photos to refine your valuation. Look for paint condition, body damage, interior wear, tire condition, and overall presentation.' : 'No photos provided — base valuation on details only.'}
 
 Return plain JSON with:
+original_price (number in ZAR — either the provided value or your estimated new purchase price),
 estimated_value_min (number in ZAR),
 estimated_value_max (number in ZAR),
 fair_market_value (number in ZAR — your best single estimate),
+retail_value (number in ZAR - expected dealership selling price),
 trade_in_value (number in ZAR — typical dealer trade-in offer),
 private_sale_value (number in ZAR — expected price in a private sale),
+total_value_lost (number in ZAR - difference between original_price and fair_market_value),
+depreciation_percentage (number - e.g., 45.5 for 45.5% lost),
 condition_rating (string — one of "Excellent", "Good", "Fair", "Poor"),
 confidence_score (number 0-1),
 value_factors (array of objects with: factor, impact ("positive" or "negative"), amount_zar (estimated impact in rands), explanation),
-market_comparison (string — brief comparison to similar listings),
+depreciation_factors (array of objects with: reason, amount_lost_zar, explanation - breaking down exactly WHY it lost the total_value_lost),
+market_comparison (string — brief comparison to similar listings in SA),
 depreciation_notes (string — expected future value trend),
 recommendations (array of strings — tips to maximize resale value),
 photo_observations (string or null — what was observed from photos, null if no photos)

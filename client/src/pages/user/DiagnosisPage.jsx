@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useAuth } from '../../context/AuthContext'
 import UserLayout from '../../layouts/UserLayout'
 import api from '../../services/api'
 
@@ -12,7 +13,7 @@ function parseMaybeJson(value) {
 }
 
 export default function DiagnosisPage() {
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const { user } = useAuth()
   const [savedVehicles, setSavedVehicles] = useState([])
   const [selectedVehicleId, setSelectedVehicleId] = useState('')
   const [vehicle, setVehicle] = useState({ make: '', model: '', year: '', mileage: '' })

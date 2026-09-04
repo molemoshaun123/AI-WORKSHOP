@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
+import { useAuth } from '../../context/AuthContext'
 import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
 import { User, Mail, Phone, Lock, Save } from 'lucide-react'
 
 export default function UserProfile() {
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const { user, updateUser } = useAuth()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     full_name: user?.full_name || '',
@@ -26,8 +27,8 @@ export default function UserProfile() {
           email: res.data.email,
           phone: res.data.phone || '',
         }))
-        // Update local storage
-        localStorage.setItem('user', JSON.stringify({ ...user, ...res.data }))
+        // Update auth context state
+        updateUser(res.data)
       } catch (e) {
         // Silent fail or toast error
       }
@@ -49,7 +50,7 @@ export default function UserProfile() {
         phone: formData.phone,
       })
       toast.success('Profile updated successfully')
-      localStorage.setItem('user', JSON.stringify({ ...user, ...res.data.user }))
+      updateUser(res.data.user)
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to update profile')
     } finally {

@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
 import { Mail, Lock, Loader2 } from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
 import api from '../../services/api'
 
 const adminLoginSchema = z.object({
@@ -19,6 +20,7 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { adminLogin } = useAuth()
 
   const onSubmit = async (data) => {
     setLoading(true)
@@ -26,8 +28,7 @@ export default function AdminLogin() {
 
     try {
       const res = await api.post('/auth/login-admin', data)
-      localStorage.setItem('adminToken', res.data.token)
-      localStorage.setItem('adminUser', JSON.stringify(res.data.user))
+      adminLogin(res.data.user, res.data.token)
       navigate('/admin/dashboard', { replace: true })
     } catch (err) {
       setError(err.response?.data?.message || 'Admin login failed')

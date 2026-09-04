@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import toast from 'react-hot-toast'
+import { useAuth } from '../../context/AuthContext'
 import UserLayout from '../../layouts/UserLayout'
 import api from '../../services/api'
 import { Camera, ChevronRight, ChevronLeft, Upload, X, TrendingUp, TrendingDown, DollarSign, Star, Car, Gauge, FileText, Sparkles } from 'lucide-react'
@@ -36,7 +37,7 @@ function formatZAR(val) {
 }
 
 export default function CarValuator() {
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const { user } = useAuth()
   const [step, setStep] = useState(0)
   const [vehicles, setVehicles] = useState([])
   const [vehicleId, setVehicleId] = useState('')
@@ -46,7 +47,7 @@ export default function CarValuator() {
   const [animateValue, setAnimateValue] = useState(false)
 
   const [form, setForm] = useState({
-    make: '', model: '', year: '', color: '',
+    make: '', model: '', year: '', color: '', original_price: '',
     mileage: '', condition: 'Good', service_history: 'Full',
     modifications: '', transmission: 'Manual', fuel_type: 'Petrol',
     province: 'Gauteng',
@@ -135,6 +136,7 @@ export default function CarValuator() {
           transmission: form.transmission,
           fuel_type: form.fuel_type,
           province: form.province,
+          original_price: form.original_price,
         },
         images,
       })
@@ -313,6 +315,20 @@ export default function CarValuator() {
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               />
             </div>
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Original Purchase Price (Optional)</label>
+            <div className="relative">
+              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="number"
+                value={form.original_price}
+                onChange={(e) => setForm({ ...form, original_price: e.target.value })}
+                placeholder="e.g. 250000"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              />
+            </div>
+            <p className="text-[10px] text-slate-400">If left blank, AI will estimate the new retail price.</p>
           </div>
         </div>
       )}
@@ -506,24 +522,52 @@ export default function CarValuator() {
     const maxValue = Number(valuation.estimated_value_max || 0)
     const tradeIn = Number(valuation.trade_in_value || 0)
     const privateSale = Number(valuation.private_sale_value || 0)
+    const retailValue = Number(valuation.retail_value || 0)
+    const originalPrice = Number(valuation.original_price || 0)
+    const valueLost = Number(valuation.total_value_lost || 0)
+    const depPercent = Number(valuation.depreciation_percentage || 0)
     const confidence = Math.round((valuation.confidence_score || 0) * 100)
 
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
-        {/* Hero value */}
-        <div className={`relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-700 p-8 text-white text-center shadow-2xl shadow-blue-500/20 transition-all duration-700 ${animateValue ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImEiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNhKSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIvPjwvc3ZnPg==')] opacity-50" />
-          <div className="relative">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/60 mb-3">Estimated Market Value</p>
-            <p className={`text-5xl sm:text-6xl font-black tracking-tight transition-all duration-1000 ${animateValue ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
-              {formatZAR(fairValue)}
-            </p>
-            <p className="text-sm font-bold text-white/70 mt-3">
-              Range: {formatZAR(minValue)} – {formatZAR(maxValue)}
-            </p>
-            <div className="mt-4 inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full">
-              <Star className="w-4 h-4 text-yellow-300" />
-              <span className="text-xs font-black">{confidence}% Confidence</span>
+        {/* Cars.co.za style Header / Hero Value */}
+        <div className={`relative overflow-hidden rounded-[2rem] bg-slate-900 border border-slate-800 p-8 sm:p-10 text-white text-center shadow-2xl transition-all duration-700 ${animateValue ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
+          <div className="absolute top-0 right-0 p-4">
+            <div className="inline-flex items-center gap-1.5 bg-blue-500/20 text-blue-400 px-3 py-1.5 rounded-full border border-blue-500/30">
+              <Star className="w-3.5 h-3.5" />
+              <span className="text-[10px] font-black">{confidence}% Confidence</span>
+            </div>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-600/20 to-transparent pointer-events-none" />
+          
+          <div className="relative z-10">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400 mb-2">Market Value Report</p>
+            <h2 className="text-2xl sm:text-3xl font-black mb-6">{form.year} {form.make} {form.model}</h2>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-12 mt-8 mb-4">
+              <div className="text-center">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Original Price</p>
+                <p className="text-2xl font-medium text-slate-300 line-through decoration-red-500/50">{formatZAR(originalPrice)}</p>
+              </div>
+              
+              <div className="hidden sm:flex flex-col items-center justify-center text-red-400">
+                <div className="h-px w-16 bg-red-500/30 absolute"></div>
+                <div className="bg-slate-900 z-10 px-2 flex flex-col items-center">
+                  <TrendingDown className="w-5 h-5 mb-1" />
+                  <span className="text-[10px] font-black">{depPercent}% Drop</span>
+                </div>
+              </div>
+
+              <div className="text-center transform scale-110">
+                <p className="text-xs font-black text-emerald-400 uppercase tracking-widest mb-2">Current Value</p>
+                <p className={`text-4xl sm:text-5xl font-black text-white tracking-tight transition-all duration-1000 ${animateValue ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+                  {formatZAR(fairValue)}
+                </p>
+              </div>
+            </div>
+
+            <div className="inline-block mt-4 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-2">
+              <p className="text-sm font-bold text-red-400">Total Value Lost: {formatZAR(valueLost)}</p>
             </div>
           </div>
         </div>
@@ -536,28 +580,68 @@ export default function CarValuator() {
             : valuation.condition_rating === 'Fair' ? 'bg-amber-50 border border-amber-200 text-amber-700'
             : 'bg-red-50 border border-red-200 text-red-700'
           }`}>
-            Condition: {valuation.condition_rating}
+            Overall Condition: {valuation.condition_rating}
           </div>
         )}
 
-        {/* Value cards */}
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Trade-In Value</p>
-            <p className="text-2xl font-black text-slate-900">{formatZAR(tradeIn)}</p>
-            <p className="text-xs font-semibold text-slate-500 mt-1">Typical dealer offer</p>
-          </div>
-          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Private Sale Value</p>
-            <p className="text-2xl font-black text-slate-900">{formatZAR(privateSale)}</p>
-            <p className="text-xs font-semibold text-slate-500 mt-1">Expected private sale price</p>
+        {/* Market Selling Options */}
+        <div className="space-y-4">
+          <h4 className="font-black text-lg text-slate-900 px-1">Selling Options</h4>
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-slate-400"></div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Dealer Trade-in</p>
+              <p className="text-2xl font-black text-slate-900">{formatZAR(tradeIn)}</p>
+              <p className="text-xs font-semibold text-slate-500 mt-2">Fastest sale, lowest price. Dealers buy at a discount to make a margin.</p>
+            </div>
+            
+            <div className="p-5 rounded-2xl bg-blue-50 border border-blue-200 shadow-sm relative overflow-hidden transform sm:-translate-y-2">
+              <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+              <div className="absolute top-2 right-2">
+                <span className="bg-blue-600 text-white text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-wider">Recommended</span>
+              </div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-2">Private Sale</p>
+              <p className="text-2xl font-black text-slate-900">{formatZAR(privateSale)}</p>
+              <p className="text-xs font-semibold text-slate-600 mt-2">Selling it yourself. Takes longer but gets you a better return.</p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-emerald-400"></div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Dealer Retail Price</p>
+              <p className="text-2xl font-black text-slate-900">{formatZAR(retailValue)}</p>
+              <p className="text-xs font-semibold text-slate-500 mt-2">What a dealership would sell this car for on their showroom floor.</p>
+            </div>
           </div>
         </div>
 
-        {/* Value factors */}
+        {/* Depreciation Breakdown */}
+        {valuation.depreciation_factors && valuation.depreciation_factors.length > 0 && (
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+            <h4 className="font-black text-lg text-slate-900 mb-1">Why did it lose value?</h4>
+            <p className="text-xs font-semibold text-slate-500 mb-6">Breakdown of the {formatZAR(valueLost)} depreciation</p>
+            
+            <div className="space-y-4">
+              {valuation.depreciation_factors.map((f, i) => (
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="flex-1">
+                    <p className="font-bold text-sm text-slate-900">{f.reason}</p>
+                    <p className="text-xs font-semibold text-slate-500 mt-1">{f.explanation}</p>
+                  </div>
+                  <div className="text-left sm:text-right">
+                    <span className="text-sm font-black text-red-500 bg-red-50 px-3 py-1 rounded-lg border border-red-100">
+                      -{formatZAR(f.amount_lost_zar)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Value factors (Condition adjustments) */}
         {valuation.value_factors && valuation.value_factors.length > 0 && (
-          <div className="p-6 rounded-2xl bg-white border border-slate-200">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">Value Factors</p>
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">Specific Condition Adjustments</p>
             <div className="space-y-3">
               {valuation.value_factors.map((f, i) => (
                 <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
@@ -581,32 +665,29 @@ export default function CarValuator() {
           </div>
         )}
 
-        {/* Photo observations */}
-        {valuation.photo_observations && (
-          <div className="p-6 rounded-2xl bg-violet-50 border border-violet-100">
-            <div className="flex items-center gap-2 mb-3">
-              <Camera className="w-4 h-4 text-violet-600" />
-              <p className="text-[10px] font-black uppercase tracking-widest text-violet-600">Photo Analysis</p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {/* Photo observations */}
+          {valuation.photo_observations && (
+            <div className="p-6 rounded-2xl bg-violet-50 border border-violet-100">
+              <div className="flex items-center gap-2 mb-3">
+                <Camera className="w-4 h-4 text-violet-600" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-violet-600">Photo Analysis</p>
+              </div>
+              <p className="text-sm font-semibold text-slate-700 leading-relaxed">{valuation.photo_observations}</p>
             </div>
-            <p className="text-sm font-semibold text-slate-700 leading-relaxed">{valuation.photo_observations}</p>
-          </div>
-        )}
+          )}
 
-        {/* Market comparison */}
-        {valuation.market_comparison && (
-          <div className="p-6 rounded-2xl bg-blue-50 border border-blue-100">
-            <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-2">Market Comparison</p>
-            <p className="text-sm font-semibold text-slate-700 leading-relaxed">{valuation.market_comparison}</p>
-          </div>
-        )}
-
-        {/* Depreciation */}
-        {valuation.depreciation_notes && (
-          <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Depreciation Outlook</p>
-            <p className="text-sm font-semibold text-slate-600 leading-relaxed">{valuation.depreciation_notes}</p>
-          </div>
-        )}
+          {/* Market comparison */}
+          {valuation.market_comparison && (
+            <div className="p-6 rounded-2xl bg-sky-50 border border-sky-100">
+              <div className="flex items-center gap-2 mb-3">
+                <FileText className="w-4 h-4 text-sky-600" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-sky-600">Market Insight</p>
+              </div>
+              <p className="text-sm font-semibold text-slate-700 leading-relaxed">{valuation.market_comparison}</p>
+            </div>
+          )}
+        </div>
 
         {/* Recommendations */}
         {valuation.recommendations && valuation.recommendations.length > 0 && (
@@ -630,7 +711,7 @@ export default function CarValuator() {
         <button
           type="button"
           onClick={resetAll}
-          className="w-full py-4 rounded-2xl border-2 border-slate-200 bg-white text-slate-900 font-black hover:bg-slate-50 transition-all"
+          className="w-full py-4 rounded-2xl border-2 border-slate-200 bg-white text-slate-900 font-black hover:bg-slate-50 transition-all mt-8"
         >
           Value Another Vehicle
         </button>

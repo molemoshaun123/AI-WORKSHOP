@@ -1,33 +1,34 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Car, Wrench, Receipt, MessageCircle, Home, DollarSign } from 'lucide-react'
+import { Car, Wrench, Receipt, MessageCircle, Home, DollarSign, LogOut, User, X } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 export default function UserLayout({ title, children }) {
   const navigate = useNavigate()
   const location = useLocation()
-  const user = JSON.parse(localStorage.getItem('user') || localStorage.getItem('adminUser') || 'null')
-  const isAdmin = !!localStorage.getItem('adminUser') || user?.role === 'admin'
+  const { user, admin, isAdmin, logout } = useAuth()
+  const [showLogoutMenu, setShowLogoutMenu] = useState(false)
   const isAuthPage =
     location.pathname === '/user/login' ||
     location.pathname === '/user/register'
 
   const handleLogout = () => {
-    localStorage.clear()
-    navigate('/', { replace: true })
+    setShowLogoutMenu(false)
+    logout()
   }
 
   useEffect(() => {
     if (isAuthPage) return
-    if (!user) {
+    if (!user && !admin) {
       navigate('/user/login', { replace: true })
       return
     }
-    if (isAdmin && !location.pathname.startsWith('/admin')) {
-      // If admin somehow ended up here, redirect them to admin dash or let them browse?
-      // Actually, if they are admin, they shouldn't use UserLayout, but let's just allow it for now or redirect
-      // navigate('/admin/dashboard', { replace: true })
-    }
-  }, [isAdmin, isAuthPage, location.pathname, navigate, user])
+  }, [isAdmin, isAuthPage, location.pathname, navigate, user, admin])
+
+  // Close logout menu on route change
+  useEffect(() => {
+    setShowLogoutMenu(false)
+  }, [location.pathname])
 
   const userNav = [
     { name: 'Dashboard', path: '/user/dashboard', icon: <Home className="w-4 h-4" /> },
@@ -37,6 +38,15 @@ export default function UserLayout({ title, children }) {
     { name: 'AI Assistant', path: '/user/diagnosis', icon: <MessageCircle className="w-4 h-4" /> },
     { name: 'History', path: '/user/history', icon: <Receipt className="w-4 h-4" /> },
     { name: 'Inbox', path: '/inbox', icon: <MessageCircle className="w-4 h-4" /> },
+  ]
+
+  // Mobile bottom nav — only 5 essential items that fit comfortably on iPhone SE
+  const mobileNav = [
+    { name: 'Home', path: '/user/dashboard', icon: <Home className="w-5 h-5" /> },
+    { name: 'Vehicles', path: '/user/vehicle', icon: <Car className="w-5 h-5" /> },
+    { name: 'Book', path: '/user/service', icon: <Wrench className="w-5 h-5" /> },
+    { name: 'Inbox', path: '/inbox', icon: <MessageCircle className="w-5 h-5" /> },
+    { name: 'Profile', path: '/user/profile', icon: <User className="w-5 h-5" /> },
   ]
 
   if (isAuthPage) {
@@ -109,7 +119,7 @@ export default function UserLayout({ title, children }) {
       </header>
 
       {/* Mobile Top Bar (Logo & Profile only) */}
-      <header className="md:hidden sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm px-4 flex justify-between items-center h-16">
+      <header className="md:hidden sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm px-4 flex justify-between items-center h-14">
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-black shadow-md">
             K
@@ -118,30 +128,36 @@ export default function UserLayout({ title, children }) {
             <h1 className="text-lg font-black tracking-tight text-slate-900 leading-none">Auto Tune</h1>
           </div>
         </Link>
-        <div className="flex gap-2">
-          <Link to="/user/profile" className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xs font-black shadow-inner">
-            {user?.full_name?.charAt(0) || 'U'}
-          </Link>
+        <div className="flex gap-2 items-center">
+          <button
+            onClick={handleLogout}
+            className="p-2 rounded-full text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+            aria-label="Logout"
+          >
+            <LogOut className="w-4.5 h-4.5" />
+          </button>
         </div>
       </header>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 pb-safe">
-        <div className="flex justify-around items-center h-16">
-          {userNav.map((item) => {
-            const active = location.pathname.startsWith(item.path) && item.path !== '/'
+      {/* Mobile Bottom Nav — 5 items max */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 mobile-bottom-nav">
+        <div className="flex justify-around items-center h-16 max-w-md mx-auto">
+          {mobileNav.map((item) => {
+            const active = item.path === '/user/dashboard'
+              ? location.pathname === '/user/dashboard'
+              : location.pathname.startsWith(item.path)
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`relative flex flex-col items-center justify-center w-full h-full gap-1 ${
-                  active ? 'text-blue-600' : 'text-slate-400 hover:text-slate-900'
+                className={`relative flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-colors ${
+                  active ? 'text-blue-600' : 'text-slate-400'
                 }`}
               >
                 {item.icon}
-                <span className="text-[10px] font-bold">{item.name}</span>
-                {item.name === 'Inbox' && (
-                  <span className="absolute top-2 right-1/4 w-2 h-2 rounded-full bg-red-500"></span>
+                <span className="text-[10px] font-bold leading-tight">{item.name}</span>
+                {active && (
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full bg-blue-600"></span>
                 )}
               </Link>
             )
@@ -159,8 +175,8 @@ export default function UserLayout({ title, children }) {
         {children}
       </main>
       
-      {/* Simple Footer */}
-      <footer className="mt-auto border-t border-slate-200 bg-white py-6">
+      {/* Simple Footer — hidden on mobile to avoid overlap with bottom nav */}
+      <footer className="mt-auto border-t border-slate-200 bg-white py-6 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm font-semibold text-slate-400">
           © {new Date().getFullYear()} Auto Tune Workshop. All rights reserved.
         </div>

@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from './context/AuthContext'
 import ErrorBoundary from './components/ErrorBoundary'
 
 const Home = lazy(() => import('./pages/Home'))
@@ -38,52 +39,30 @@ const ImageUpload = lazy(() => import('./pages/user/ImageUpload'))
 const UserProfile = lazy(() => import('./pages/user/UserProfile'))
 const ServiceHistory = lazy(() => import('./pages/user/ServiceHistory'))
 
-function getStoredUser() {
-  try {
-    return JSON.parse(localStorage.getItem('user') || 'null')
-  } catch {
-    return null
-  }
-}
-
-function getStoredAdmin() {
-  try {
-    return JSON.parse(localStorage.getItem('adminUser') || 'null')
-  } catch {
-    return null
-  }
-}
-
 function RequireUser({ children }) {
-  const user = getStoredUser()
-  const admin = getStoredAdmin()
-  if (admin) return <Navigate to="/admin/dashboard" replace />
-  if (!user) return <Navigate to="/user/login" replace />
+  const { isUser, isAdmin } = useAuth()
+  if (isAdmin) return <Navigate to="/admin/dashboard" replace />
+  if (!isUser) return <Navigate to="/user/login" replace />
   return children
 }
 
 function RequireAdmin({ children }) {
-  const admin = getStoredAdmin()
-  const user = getStoredUser()
-  if (user) return <Navigate to="/user/dashboard" replace />
-  if (!admin) return <Navigate to="/admin/login" replace />
+  const { isUser, isAdmin } = useAuth()
+  if (isUser) return <Navigate to="/user/dashboard" replace />
+  if (!isAdmin) return <Navigate to="/admin/login" replace />
   return children
 }
 
 function RequireAnyAuth({ children }) {
-  const user = getStoredUser()
-  const admin = getStoredAdmin()
-  if (!user && !admin) return <Navigate to="/user/login" replace />
+  const { isAuthenticated } = useAuth()
+  if (!isAuthenticated) return <Navigate to="/user/login" replace />
   return children
 }
 
 function RedirectIfAuthed({ kind, children }) {
-  const user = getStoredUser()
-  const admin = getStoredAdmin()
-  if (admin) return <Navigate to="/admin/dashboard" replace />
-  if (user) return <Navigate to="/user/dashboard" replace />
-  if (kind === 'admin' && user) return <Navigate to="/user/dashboard" replace />
-  if (kind === 'user' && admin) return <Navigate to="/admin/dashboard" replace />
+  const { isUser, isAdmin } = useAuth()
+  if (isAdmin) return <Navigate to="/admin/dashboard" replace />
+  if (isUser) return <Navigate to="/user/dashboard" replace />
   return children
 }
 

@@ -5,6 +5,14 @@ const api = axios.create({
   timeout: 120000,
 })
 
+// Module-level reference to AuthContext's clearAuth function
+// Set by AuthProvider on mount so the interceptor can clear React state
+let _authLogout = null
+
+export function setAuthLogout(fn) {
+  _authLogout = fn
+}
+
 api.interceptors.request.use(
   (config) => {
     const adminToken = localStorage.getItem('adminToken')
@@ -26,6 +34,12 @@ api.interceptors.response.use(
     if (error?.response?.status === 401) {
       const isAdminArea = window.location.pathname.startsWith('/admin')
 
+      // Clear React auth state if available
+      if (_authLogout) {
+        _authLogout()
+      }
+
+      // Also clear localStorage directly as fallback
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       localStorage.removeItem('adminToken')

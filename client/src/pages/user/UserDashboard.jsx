@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Clock, Settings, CheckCircle2, Car, Timer, MessageCircle, Receipt, XCircle } from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
 import UserLayout from '../../layouts/UserLayout'
 import api from '../../services/api'
 import toast from 'react-hot-toast'
@@ -23,7 +24,7 @@ export default function UserDashboard() {
   const [payingInvoice, setPayingInvoice] = useState(null)
 
   const navigate = useNavigate()
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const { user } = useAuth()
 
   const loadActionItems = async () => {
     if (!user) return

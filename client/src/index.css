@@ -62,3 +62,48 @@ button {
   overflow-x: clip;
 }
 
+/* ================================================================
+   Mobile-specific improvements for iPhone / small-screen devices
+   ================================================================ */
+
+/* Bottom nav safe area: ensure the nav accounts for the iPhone home indicator */
+.mobile-bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Ensure minimum touch target size for interactive elements on mobile (44×44 per Apple HIG) */
+@media (max-width: 768px) {
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Prevent text size adjustment on orientation change */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Prevent pull-to-refresh interfering with scroll */
+  body {
+    overscroll-behavior-y: contain;
+  }
+
+  /* Smoother momentum scrolling on iOS */
+  .overflow-auto,
+  .overflow-y-auto,
+  .overflow-scroll,
+  .overflow-y-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Viewport height fix for mobile browsers (address bar hiding/showing) */
+@supports (height: 100dvh) {
+  .min-h-screen {
+    min-height: 100dvh;
+  }
+}
+

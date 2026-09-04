@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import UserLayout from '../../layouts/UserLayout'
 import api from '../../services/api'
 import ConfirmModal from '../../components/ConfirmModal'
@@ -8,7 +9,7 @@ import SlidePanel from '../../components/SlidePanel'
 import { Car, Edit, Plus, Trash2, Camera } from 'lucide-react'
 
 export default function VehicleForm() {
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const { user } = useAuth()
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)
   

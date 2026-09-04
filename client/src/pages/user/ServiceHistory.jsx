@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { useAuth } from '../../context/AuthContext'
 import UserLayout from '../../layouts/UserLayout'
 import api from '../../services/api'
 import Pagination from '../../components/Pagination'
@@ -12,7 +13,7 @@ export default function ServiceHistory() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 6
 
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const { user } = useAuth()
 
   useEffect(() => {
     const fetchHistory = async () => {

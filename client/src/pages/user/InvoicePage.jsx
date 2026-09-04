@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Printer, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react'
+import { useAuth } from '../../context/AuthContext'
 import api from '../../services/api'
 import UserLayout from '../../layouts/UserLayout'
 import toast from 'react-hot-toast'
@@ -13,7 +14,7 @@ export default function InvoicePage() {
   const [finances, setFinances] = useState({ quotes: [], invoices: [] })
   const [loading, setLoading] = useState(true)
 
-  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const { user } = useAuth()
 
   useEffect(() => {
     if (!user) {

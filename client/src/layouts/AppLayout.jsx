@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import NotificationBell from '../components/NotificationBell'
 import { Menu, X } from 'lucide-react'
 
@@ -16,8 +17,8 @@ export default function AppLayout({ title, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  const user = JSON.parse(localStorage.getItem('user') || localStorage.getItem('adminUser') || 'null')
-  const isAdmin = !!localStorage.getItem('adminUser') || user?.role === 'admin'
+  const { user, admin, isAdmin, logout } = useAuth()
+  const activeUser = admin || user
   const isAuthPage =
     location.pathname === '/user/login' ||
     location.pathname === '/user/register' ||
@@ -25,13 +26,12 @@ export default function AppLayout({ title, children }) {
     location.pathname === '/admin/register'
 
   const handleLogout = () => {
-    localStorage.clear()
-    navigate('/', { replace: true })
+    logout()
   }
 
   useEffect(() => {
     if (isAuthPage) return
-    if (!user) {
+    if (!activeUser) {
       navigate(location.pathname.startsWith('/admin') ? '/admin/login' : '/user/login', { replace: true })
       return
     }
@@ -41,7 +41,7 @@ export default function AppLayout({ title, children }) {
     if (location.pathname.startsWith('/user') && isAdmin) {
       navigate('/admin/dashboard', { replace: true })
     }
-  }, [isAdmin, isAuthPage, location.pathname, navigate, user])
+  }, [isAdmin, isAuthPage, location.pathname, navigate, activeUser])
 
   // Close sidebar on route change
   useEffect(() => {
@@ -137,11 +137,11 @@ export default function AppLayout({ title, children }) {
           <div className="mb-4 rounded-2xl border border-white/5 bg-slate-800/50 p-4">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-slate-400 to-slate-600 text-xs font-black">
-                {user?.full_name?.charAt(0)}
+                {activeUser?.full_name?.charAt(0)}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-xs font-bold">{user?.full_name}</p>
-                <p className="truncate text-[10px] text-slate-500">{user?.email}</p>
+                <p className="truncate text-xs font-bold">{activeUser?.full_name}</p>
+                <p className="truncate text-[10px] text-slate-500">{activeUser?.email}</p>
               </div>
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function AppLayout({ title, children }) {
         <div className="absolute bottom-0 left-0 -z-10 h-96 w-96 bg-cyan-400/5 blur-3xl"></div>
 
         {/* Top bar on each dashboard page */}
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/5 bg-slate-950/60 px-4 py-4 backdrop-blur-md sm:px-6 sm:py-5 lg:px-10">
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/5 bg-slate-950/60 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-4 backdrop-blur-md sm:px-6 sm:py-5 lg:px-10">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -186,7 +186,7 @@ export default function AppLayout({ title, children }) {
           </div>
         </header>
 
-        <main className="mx-auto max-w-7xl p-4 pb-8 sm:p-6 lg:p-10">{children}</main>
+        <main className="mx-auto max-w-7xl p-4 pb-[max(2rem,env(safe-area-inset-bottom))] sm:p-6 lg:p-10">{children}</main>
       </div>
     </div>
   )

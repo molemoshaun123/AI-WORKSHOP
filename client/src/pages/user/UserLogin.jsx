@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Mail, Lock, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useAuth } from '../../context/AuthContext'
 import api from '../../services/api'
 
 const loginSchema = z.object({
@@ -19,13 +20,13 @@ export default function UserLogin() {
   })
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const { login } = useAuth()
 
   const onSubmit = async (data) => {
     setLoading(true)
     try {
       const res = await api.post('/auth/login-user', data)
-      localStorage.setItem('token', res.data.token)
-      localStorage.setItem('user', JSON.stringify(res.data.user))
+      login(res.data.user, res.data.token)
       toast.success('Welcome back!')
       navigate('/user/dashboard', { replace: true })
     } catch (err) {
