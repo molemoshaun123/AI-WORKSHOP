@@ -64,15 +64,15 @@ export default function Home() {
       {/* Landing page: top navigation bar + logo + portal buttons */}
       <nav className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/60 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600 font-black text-slate-950 shadow-[0_0_30px_rgba(34,211,238,0.35)]">
+          <Link to="/user/dashboard" className="flex items-center gap-3 group">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-600 font-black text-white shadow-[0_0_30px_rgba(37,99,235,0.35)] transition-transform group-hover:scale-105">
               K
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-cyan-400">Workshop Platform</p>
-              <h1 className="text-lg font-black tracking-tight sm:text-xl">AUTO TUNE</h1>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-400 transition-colors group-hover:text-blue-300">Customer Portal</p>
+              <h1 className="text-lg font-black tracking-tight sm:text-xl text-white transition-colors group-hover:text-slate-200">AUTO TUNE</h1>
             </div>
-          </div>
+          </Link>
 
           <div className="flex items-center gap-2 sm:gap-3">
             <Link
