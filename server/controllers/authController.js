@@ -83,22 +83,6 @@ const registerUser = async (req, res) => {
 
     const newUser = result.rows[0]
 
-    if (process.env.MAIL_USER && process.env.MAIL_APP_PASSWORD) {
-      try {
-        const transporter = getMailTransport()
-        await transporter.sendMail({
-          from: `"AI Workshop System" <${process.env.MAIL_USER}>`,
-          to: newUser.email,
-          subject: 'Welcome to AI Workshop System!',
-          html: `<p>Hello ${newUser.full_name},</p>
-                 <p>Welcome to the AI Workshop System! Your account has been successfully created.</p>
-                 <p>You can now log in to track your vehicle service, book appointments, and more.</p>`,
-        })
-      } catch (mailError) {
-        console.error('Failed to send welcome email:', mailError.message)
-      }
-    }
-
     res.status(201).json({
       message: 'User registered successfully',
       user: newUser,
