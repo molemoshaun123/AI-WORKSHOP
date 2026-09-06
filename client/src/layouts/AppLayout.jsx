@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import NotificationBell from '../components/NotificationBell'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, LogOut } from 'lucide-react'
 import AiCarBot from '../components/AiCarBot'
 
 /* Sidebar nav icon chip colours */
@@ -148,12 +148,13 @@ export default function AppLayout({ title, children }) {
               </div>
             </div>
           </div>
-          {/* Logout: destructive red accent */}
+          
           <button
             onClick={handleLogout}
-            className="w-full rounded-xl border border-red-500/20 bg-red-500/10 py-3 text-xs font-bold text-red-400 transition hover:bg-red-500/20"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 py-3 text-sm font-bold text-red-400 transition-colors hover:bg-red-500/20 hover:text-red-300"
           >
-            Logout
+            <LogOut className="h-4 w-4" />
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>

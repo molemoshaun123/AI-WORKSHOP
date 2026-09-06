@@ -265,15 +265,20 @@ const forgotPassword = async (req, res) => {
     const resetLink = `${appUrl}/reset-password/${resetToken}`
 
     if (process.env.MAIL_USER && process.env.MAIL_APP_PASSWORD) {
-      const transporter = getMailTransport()
-      await transporter.sendMail({
-        from: `"AI Workshop System" <${process.env.MAIL_USER}>`,
-        to: user.email,
-        subject: 'Reset your AI Workshop password',
-        html: `<p>Hello ${user.full_name || 'there'},</p>
-               <p>Click the link below to reset your password. This link expires in 1 hour.</p>
-               <p><a href="${resetLink}">${resetLink}</a></p>`,
-      })
+      try {
+        const transporter = getMailTransport()
+        await transporter.sendMail({
+          from: `"AI Workshop System" <${process.env.MAIL_USER}>`,
+          to: user.email,
+          subject: 'Reset your AI Workshop password',
+          html: `<p>Hello ${user.full_name || 'there'},</p>
+                 <p>Click the link below to reset your password. This link expires in 1 hour.</p>
+                 <p><a href="${resetLink}">${resetLink}</a></p>`,
+        })
+      } catch (mailError) {
+        console.error('Failed to send reset email. Check MAIL_USER and MAIL_APP_PASSWORD credentials:', mailError.message)
+        console.warn('Fallback Reset Link (Dev Mode):', resetLink)
+      }
     } else {
       console.warn('MAIL_USER or MAIL_APP_PASSWORD not set. Reset link:', resetLink)
     }

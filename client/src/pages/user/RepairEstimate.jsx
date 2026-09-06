@@ -319,7 +319,7 @@ export default function CarValuator() {
           <div className="space-y-1">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Original Purchase Price (Optional)</label>
             <div className="relative">
-              <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">R</span>
               <input
                 type="number"
                 value={form.original_price}
