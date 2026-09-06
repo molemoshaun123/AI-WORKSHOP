@@ -12,14 +12,80 @@ function readStorage(key) {
   }
 }
 
+/**
+ * Decode a JWT and check if it is expired.
+ * Returns true if the token is valid and NOT expired.
+ */
+function isTokenValid(jwt) {
+  if (!jwt || typeof jwt !== 'string') return false
+  try {
+    const parts = jwt.split('.')
+    if (parts.length !== 3) return false
+    const payload = JSON.parse(atob(parts[1]))
+    if (!payload.exp) return false
+    // exp is in seconds, Date.now() is in ms
+    return payload.exp * 1000 > Date.now()
+  } catch {
+    return false
+  }
+}
+
+/**
+ * On startup, validate stored tokens.
+ * If a token is expired or invalid, clear that session from localStorage
+ * so that the user cannot access protected routes without re-authenticating.
+ */
+function getValidatedInitialState() {
+  const storedToken = localStorage.getItem('token') || null
+  const storedAdminToken = localStorage.getItem('adminToken') || null
+  const storedUser = readStorage('user')
+  const storedAdmin = readStorage('adminUser')
+
+  let user = storedUser
+  let token = storedToken
+  let admin = storedAdmin
+  let adminToken = storedAdminToken
+
+  // Validate user token
+  if (token && !isTokenValid(token)) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    user = null
+    token = null
+  }
+
+  // Validate admin token
+  if (adminToken && !isTokenValid(adminToken)) {
+    localStorage.removeItem('adminToken')
+    localStorage.removeItem('adminUser')
+    admin = null
+    adminToken = null
+  }
+
+  // If there's user data but no valid token, clear user
+  if (user && !token) {
+    localStorage.removeItem('user')
+    user = null
+  }
+
+  // If there's admin data but no valid token, clear admin
+  if (admin && !adminToken) {
+    localStorage.removeItem('adminUser')
+    admin = null
+  }
+
+  return { user, token, admin, adminToken }
+}
+
 export function AuthProvider({ children }) {
   const navigate = useNavigate()
 
-  // Initialise state from localStorage (for page refresh persistence)
-  const [user, setUser] = useState(() => readStorage('user'))
-  const [admin, setAdmin] = useState(() => readStorage('adminUser'))
-  const [token, setToken] = useState(() => localStorage.getItem('token') || null)
-  const [adminToken, setAdminToken] = useState(() => localStorage.getItem('adminToken') || null)
+  // Initialise state from localStorage with JWT validation
+  const initial = useMemo(() => getValidatedInitialState(), [])
+  const [user, setUser] = useState(initial.user)
+  const [admin, setAdmin] = useState(initial.admin)
+  const [token, setToken] = useState(initial.token)
+  const [adminToken, setAdminToken] = useState(initial.adminToken)
 
   const login = useCallback((userData, jwt) => {
     // Clear any admin session first

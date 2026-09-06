@@ -129,6 +129,14 @@ export default function App() {
           }
         />
         <Route
+          path="/user/estimate"
+          element={
+            <RequireUser>
+              <CarValuator />
+            </RequireUser>
+          }
+        />
+        <Route
           path="/user/invoice/:job_id"
           element={
             <RequireUser>

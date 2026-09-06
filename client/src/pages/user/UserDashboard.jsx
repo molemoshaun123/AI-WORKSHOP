@@ -267,7 +267,7 @@ export default function UserDashboard() {
                       Book Service
                     </Link>
                     <Link
-                      to="/user/estimate"
+                      to="/user/car-value"
                       className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50 hover:-translate-y-0.5"
                     >
                       Get Estimate
@@ -348,7 +348,7 @@ export default function UserDashboard() {
                   </Link>
 
                   <Link
-                    to="/user/estimate"
+                    to="/user/car-value"
                     className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-4 transition hover:bg-slate-100 hover:border-slate-200"
                   >
                     <Timer className="w-8 h-8 text-orange-500" />

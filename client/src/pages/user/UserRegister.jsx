@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { CheckCircle2, Loader2 } from 'lucide-react'
+import { CheckCircle2, Loader2, XCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
@@ -24,13 +24,17 @@ const registerSchema = z.object({
     strongPasswordRegex,
     'Password must be 6+ characters and include a letter, number, and special character'
   ),
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
 }).refine((data) => normalizeName(data.password) !== normalizeName(data.full_name), {
   message: 'Password must not be the same as your name',
   path: ['password'],
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Passwords do not match',
+  path: ['confirmPassword'],
 })
 
 export default function UserRegister() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(registerSchema)
   })
   const [loading, setLoading] = useState(false)
@@ -38,10 +42,38 @@ export default function UserRegister() {
   const [registeredUser, setRegisteredUser] = useState(null)
   const navigate = useNavigate()
 
+  // Watch password fields for real-time match indicator
+  const passwordValue = watch('password', '')
+  const confirmPasswordValue = watch('confirmPassword', '')
+  const passwordsEntered = passwordValue.length > 0 && confirmPasswordValue.length > 0
+  const passwordsMatch = passwordValue === confirmPasswordValue
+
+  // Block non-numeric input for phone field
+  const handlePhoneKeyDown = (e) => {
+    // Allow: backspace, delete, tab, escape, enter, arrows
+    const allowed = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+    if (allowed.includes(e.key)) return
+    // Allow Ctrl/Cmd + A/C/V/X
+    if ((e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase())) return
+    // Block anything that isn't a digit
+    if (!/^\d$/.test(e.key)) {
+      e.preventDefault()
+    }
+  }
+
+  // Strip non-numeric characters on paste/input
+  const handlePhoneInput = (e) => {
+    const cleaned = e.target.value.replace(/\D/g, '')
+    if (cleaned !== e.target.value) {
+      e.target.value = cleaned
+    }
+  }
+
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-      const res = await api.post('/auth/register-user', data)
+      const { confirmPassword, ...submitData } = data
+      const res = await api.post('/auth/register-user', submitData)
       setRegisteredUser(res.data.user)
       setSuccess(true)
     } catch (err) {
@@ -130,7 +162,12 @@ export default function UserRegister() {
               <div className="space-y-1">
                 <label className="text-sm font-semibold text-slate-700 ml-1">Phone</label>
                 <input 
-                  placeholder="0821234567" 
+                  type="tel"
+                  inputMode="numeric"
+                  placeholder="0821234567"
+                  maxLength="10"
+                  onKeyDown={handlePhoneKeyDown}
+                  onInput={handlePhoneInput}
                   className={`w-full border ${errors.phone ? 'border-red-500' : 'border-slate-200'} p-4 rounded-2xl text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all`}
                   {...register('phone')}
                 />
@@ -157,6 +194,36 @@ export default function UserRegister() {
                 {...register('password')}
               />
               {errors.password && <p className="text-red-500 text-xs font-bold pl-1 mt-1">{errors.password.message}</p>}
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm font-semibold text-slate-700 ml-1">Confirm Password</label>
+              <input 
+                type="password" 
+                placeholder="Re-enter your password" 
+                className={`w-full border ${errors.confirmPassword ? 'border-red-500' : passwordsEntered && passwordsMatch ? 'border-emerald-500' : 'border-slate-200'} p-4 rounded-2xl text-slate-900 placeholder:text-slate-400 focus:ring-2 ${passwordsEntered && passwordsMatch ? 'focus:ring-emerald-500' : 'focus:ring-blue-500'} focus:border-transparent outline-none transition-all`}
+                {...register('confirmPassword')}
+              />
+              {errors.confirmPassword && <p className="text-red-500 text-xs font-bold pl-1 mt-1">{errors.confirmPassword.message}</p>}
+              {!errors.confirmPassword && passwordsEntered && (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex items-center gap-1.5 pl-1 mt-1.5 text-xs font-bold ${passwordsMatch ? 'text-emerald-600' : 'text-red-500'}`}
+                >
+                  {passwordsMatch ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Passwords match
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="w-3.5 h-3.5" />
+                      Passwords do not match
+                    </>
+                  )}
+                </motion.div>
+              )}
             </div>
             
             <motion.button 

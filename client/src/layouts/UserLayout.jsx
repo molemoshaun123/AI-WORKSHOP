@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Car, Wrench, Receipt, MessageCircle, Home, DollarSign, LogOut, User, X } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import AiCarBot from '../components/AiCarBot'
 
 export default function UserLayout({ title, children }) {
   const navigate = useNavigate()
@@ -181,6 +182,9 @@ export default function UserLayout({ title, children }) {
           © {new Date().getFullYear()} Auto Tune Workshop. All rights reserved.
         </div>
       </footer>
+
+      {/* Floating AI Car Chatbot */}
+      <AiCarBot />
     </div>
   )
 }
