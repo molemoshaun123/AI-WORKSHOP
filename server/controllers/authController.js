@@ -8,7 +8,7 @@ require('dotenv').config()
 const normalizeEmail = (email) => String(email || '').trim().toLowerCase()
 const normalizePhone = (phone) => String(phone || '').trim()
 const NAME_REGEX = /^[A-Za-z][A-Za-z\s'-]* [A-Za-z][A-Za-z\s'-]*$/
-const SA_PHONE_REGEX = /^0\d{9}$/
+const SA_PHONE_REGEX = /^0[678]\d{8}$/
 const STRONG_PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/
 const normalizeName = (name) => String(name || '').toLowerCase().replace(/[^a-z]/g, '')
 
@@ -34,8 +34,12 @@ const validateRegistrationFields = ({ full_name, email, phone, password }) => {
   if (!STRONG_PASSWORD_REGEX.test(cleanPassword)) {
     return { error: 'Password must be at least 6 characters and include a letter, number, and special character' }
   }
-  if (normalizeName(cleanPassword) && normalizeName(cleanPassword) === normalizeName(cleanName)) {
-    return { error: 'Password must not be the same as your name' }
+  const nameParts = cleanName.toLowerCase().split(/\s+/)
+  const passwordLower = cleanPassword.toLowerCase()
+  const containsName = nameParts.some(part => part.length >= 3 && passwordLower.includes(part))
+  
+  if (containsName) {
+    return { error: 'Password cannot contain parts of your name' }
   }
 
   return { cleanName, normalizedEmail, cleanPhone, cleanPassword }
@@ -77,9 +81,27 @@ const registerUser = async (req, res) => {
       [cleanName, normalizedEmail, cleanPhone || null, hashedPassword, pin || null, 'user']
     )
 
+    const newUser = result.rows[0]
+
+    if (process.env.MAIL_USER && process.env.MAIL_APP_PASSWORD) {
+      try {
+        const transporter = getMailTransport()
+        await transporter.sendMail({
+          from: `"AI Workshop System" <${process.env.MAIL_USER}>`,
+          to: newUser.email,
+          subject: 'Welcome to AI Workshop System!',
+          html: `<p>Hello ${newUser.full_name},</p>
+                 <p>Welcome to the AI Workshop System! Your account has been successfully created.</p>
+                 <p>You can now log in to track your vehicle service, book appointments, and more.</p>`,
+        })
+      } catch (mailError) {
+        console.error('Failed to send welcome email:', mailError.message)
+      }
+    }
+
     res.status(201).json({
       message: 'User registered successfully',
-      user: result.rows[0],
+      user: newUser,
     })
   } catch (error) {
     console.error('Register user error:', error.message)

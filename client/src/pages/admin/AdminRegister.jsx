@@ -10,7 +10,7 @@ import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
 
 const nameRegex = /^[A-Za-z][A-Za-z\s'-]* [A-Za-z][A-Za-z\s'-]*$/
-const saPhoneRegex = /^0\d{9}$/
+const saPhoneRegex = /^0[678]\d{8}$/
 const strongPasswordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/
 const normalizeName = (value) => String(value || '').toLowerCase().replace(/[^a-z]/g, '')
 
@@ -25,8 +25,8 @@ const adminRegisterSchema = z.object({
     'Password must be 6+ characters and include a letter, number, and special character'
   ),
   confirmPassword: z.string().min(1, 'Please confirm your password'),
-}).refine((data) => normalizeName(data.password) !== normalizeName(data.full_name), {
-  message: 'Password must not be the same as your name',
+}).refine((data) => !data.full_name.toLowerCase().split(/\s+/).some(part => part.length >= 3 && data.password.toLowerCase().includes(part)), {
+  message: 'Password cannot contain parts of your name',
   path: ['password'],
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
