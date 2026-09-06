@@ -35,7 +35,7 @@ export default function UserLayout({ title, children }) {
     { name: 'Dashboard', path: '/user/dashboard', icon: <Home className="w-4 h-4" /> },
     { name: 'My Vehicles', path: '/user/vehicle', icon: <Car className="w-4 h-4" /> },
     { name: 'Book Service', path: '/user/service', icon: <Wrench className="w-4 h-4" /> },
-    { name: 'Car Value', path: '/user/car-value', icon: <DollarSign className="w-4 h-4" /> },
+    { name: 'Car Evaluation', path: '/user/car-value', icon: <DollarSign className="w-4 h-4" /> },
     { name: 'AI Assistant', path: '/user/diagnosis', icon: <MessageCircle className="w-4 h-4" /> },
     { name: 'History', path: '/user/history', icon: <Receipt className="w-4 h-4" /> },
     { name: 'Inbox', path: '/inbox', icon: <MessageCircle className="w-4 h-4" /> },
@@ -46,7 +46,7 @@ export default function UserLayout({ title, children }) {
     { name: 'Home', path: '/user/dashboard', icon: <Home className="w-5 h-5" /> },
     { name: 'Vehicles', path: '/user/vehicle', icon: <Car className="w-5 h-5" /> },
     { name: 'Book', path: '/user/service', icon: <Wrench className="w-5 h-5" /> },
-    { name: 'Inbox', path: '/inbox', icon: <MessageCircle className="w-5 h-5" /> },
+    { name: 'Evaluate', path: '/user/car-value', icon: <DollarSign className="w-5 h-5" /> },
     { name: 'Profile', path: '/user/profile', icon: <User className="w-5 h-5" /> },
   ]
 

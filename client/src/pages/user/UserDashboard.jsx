@@ -270,7 +270,7 @@ export default function UserDashboard() {
                       to="/user/car-value"
                       className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50 hover:-translate-y-0.5"
                     >
-                      Get Estimate
+                      Evaluate Car
                     </Link>
                   </div>
                 </div>
@@ -352,8 +352,8 @@ export default function UserDashboard() {
                     className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-4 transition hover:bg-slate-100 hover:border-slate-200"
                   >
                     <Timer className="w-8 h-8 text-orange-500" />
-                    <p className="mt-3 text-base font-black text-slate-900">Estimate</p>
-                    <p className="mt-1 text-xs text-slate-500">Repair planning</p>
+                    <p className="mt-3 text-base font-black text-slate-900">Car Evaluation</p>
+                    <p className="mt-1 text-xs text-slate-500">Value your car</p>
                   </Link>
 
                   <Link
