@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import UserLayout from '../../layouts/UserLayout'
+import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
 
 export default function ServiceRequest() {
@@ -138,9 +138,9 @@ export default function ServiceRequest() {
   }
 
   return (
-    <UserLayout title="Request Service">
+    <AppLayout title="Request Service">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-[2.5rem] shadow-sm overflow-hidden border border-slate-200">
+        <div className="bg-slate-900/60 rounded-[2.5rem] shadow-xl shadow-black/20 overflow-hidden border border-white/10">
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-10 py-12 text-white">
             <h2 className="text-3xl font-black mb-2">Service Details</h2>
             <p className="text-blue-100 opacity-80">Describe the issues you're experiencing with your vehicle.</p>
@@ -148,11 +148,11 @@ export default function ServiceRequest() {
 
           <form onSubmit={handleSubmit} className="p-10 space-y-6">
             <div className="space-y-1">
-              <label className="text-sm font-bold text-slate-700 ml-1">Select Vehicle</label>
+              <label className="text-sm font-bold text-slate-300 ml-1">Select Vehicle</label>
               {vehicles.length > 0 ? (
                 <select 
                   name="vehicle_id" 
-                  className="w-full border-slate-200 border p-4 rounded-2xl text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:1.5rem] bg-[right_1rem_center] bg-no-repeat" 
+                  className="w-full border-white/10 border p-4 rounded-2xl text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-[length:1.5rem] bg-[right_1rem_center] bg-no-repeat" 
                   onChange={handleChange}
                   value={form.vehicle_id}
                 >
@@ -161,7 +161,7 @@ export default function ServiceRequest() {
                   ))}
                 </select>
               ) : (
-                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-sm flex justify-between items-center">
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-sm flex justify-between items-center">
                   <span>No vehicles registered yet.</span>
                   <button type="button" onClick={() => navigate('/user/vehicle')} className="font-bold underline">Add one now</button>
                 </div>
@@ -169,13 +169,13 @@ export default function ServiceRequest() {
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-bold text-slate-700 ml-1">Job Title</label>
-              <input name="title" value={form.title} placeholder="e.g. Annual Service or Strange Noise" className="w-full border-slate-200 border p-4 rounded-2xl text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500 transition-all" onChange={handleChange} required />
+              <label className="text-sm font-bold text-slate-300 ml-1">Job Title</label>
+              <input name="title" value={form.title} placeholder="e.g. Annual Service or Strange Noise" className="w-full border-white/10 border p-4 rounded-2xl text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500 transition-all" onChange={handleChange} required />
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-bold text-slate-700 ml-1">Symptoms & Description</label>
-              <textarea name="symptoms" value={form.symptoms} placeholder="Describe what's wrong in detail..." className="w-full border-slate-200 border p-4 rounded-2xl text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500 transition-all h-40 resize-none" onChange={handleChange} required></textarea>
+              <label className="text-sm font-bold text-slate-300 ml-1">Symptoms & Description</label>
+              <textarea name="symptoms" value={form.symptoms} placeholder="Describe what's wrong in detail..." className="w-full border-white/10 border p-4 rounded-2xl text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500 transition-all h-40 resize-none" onChange={handleChange} required></textarea>
               <button
                 type="button"
                 onClick={getTimeEstimate}
@@ -186,31 +186,31 @@ export default function ServiceRequest() {
               </button>
 
               {timeEstimate && (
-                <div className="mt-3 p-5 rounded-2xl bg-blue-50 border border-blue-200 text-slate-700 space-y-2">
-                  <p className="text-xs font-black text-blue-600 uppercase tracking-widest">⏱️ Estimated Repair Time</p>
+                <div className="mt-3 p-5 rounded-2xl bg-blue-500/10 border border-blue-500/20 text-slate-300 space-y-2">
+                  <p className="text-xs font-black text-blue-400 uppercase tracking-widest">⏱️ Estimated Repair Time</p>
                   <div className="flex gap-4 mt-2">
-                    <div className="flex-1 p-3 rounded-xl bg-white border border-blue-100 text-center">
-                      <p className="text-2xl font-black text-blue-700">{timeEstimate.estimated_hours_min || '?'} - {timeEstimate.estimated_hours_max || '?'}</p>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Hours</p>
+                    <div className="flex-1 p-3 rounded-xl bg-slate-900/60 border border-blue-500/10 text-center">
+                      <p className="text-2xl font-black text-blue-400">{timeEstimate.estimated_hours_min || '?'} - {timeEstimate.estimated_hours_max || '?'}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Hours</p>
                     </div>
-                    <div className="flex-1 p-3 rounded-xl bg-white border border-blue-100 text-center">
-                      <p className="text-2xl font-black text-blue-700">{timeEstimate.estimated_days_min || '?'} - {timeEstimate.estimated_days_max || '?'}</p>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Days</p>
+                    <div className="flex-1 p-3 rounded-xl bg-slate-900/60 border border-blue-500/10 text-center">
+                      <p className="text-2xl font-black text-blue-400">{timeEstimate.estimated_days_min || '?'} - {timeEstimate.estimated_days_max || '?'}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Days</p>
                     </div>
                   </div>
                   {timeEstimate.scheduling_notes && (
-                    <p className="text-xs font-semibold text-slate-600 mt-2">📌 {timeEstimate.scheduling_notes}</p>
+                    <p className="text-xs font-semibold text-slate-300 mt-2">📌 {timeEstimate.scheduling_notes}</p>
                   )}
                 </div>
               )}
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-bold text-slate-700 ml-1">Attach a Photo (Optional)</label>
+              <label className="text-sm font-bold text-slate-300 ml-1">Attach a Photo (Optional)</label>
               <div className="relative">
                 {form.image_url ? (
                   <div className="relative inline-block w-full">
-                    <img src={form.image_url} alt="Attached" className="max-h-64 w-full object-cover rounded-2xl border border-slate-200" />
+                    <img src={form.image_url} alt="Attached" className="max-h-64 w-full object-cover rounded-2xl border border-white/10" />
                     <button 
                       type="button" 
                       onClick={() => setForm({...form, image_url: ''})}
@@ -220,18 +220,18 @@ export default function ServiceRequest() {
                     </button>
                   </div>
                 ) : (
-                  <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:border-blue-400 transition-colors relative cursor-pointer group">
+                  <div className="bg-slate-800/50 border-2 border-dashed border-white/10 rounded-2xl p-6 text-center hover:border-blue-400 transition-colors relative cursor-pointer group">
                     <input type="file" accept="image/*" onChange={handleImageUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                    <p className="text-sm font-bold text-slate-500 group-hover:text-blue-600">Click or tap to attach a photo</p>
+                    <p className="text-sm font-bold text-slate-400 group-hover:text-blue-400">Click or tap to attach a photo</p>
                   </div>
                 )}
               </div>
             </div>
 
             <div className="space-y-3">
-              <label className="text-sm font-bold text-slate-700 ml-1">Preferred Booking Date (Optional)</label>
+              <label className="text-sm font-bold text-slate-300 ml-1">Preferred Booking Date (Optional)</label>
               
-              <div className="bg-slate-50 border border-slate-200 rounded-[2rem] p-6">
+              <div className="bg-slate-800/50 border border-white/10 rounded-[2rem] p-6">
                 <div className="flex gap-4 overflow-x-auto pb-4 snap-x">
                   {nextWorkingDays.map((day, i) => {
                     const isTomorrow = i === 0
@@ -240,11 +240,11 @@ export default function ServiceRequest() {
                     const month = day.toLocaleDateString('en-US', { month: 'short' })
                     
                     return (
-                      <div key={i} className="flex-shrink-0 w-40 snap-start bg-white border border-slate-200 rounded-2xl p-4 flex flex-col shadow-sm">
+                      <div key={i} className="flex-shrink-0 w-40 snap-start bg-slate-900/60 border border-white/10 rounded-2xl p-4 flex flex-col shadow-xl shadow-black/20">
                         <div className="text-center mb-4">
                           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{month} {dayName}</p>
-                          <p className="text-2xl font-black text-slate-900">{dayNum}</p>
-                          {isTomorrow && <span className="bg-blue-100 text-blue-700 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md mt-1 inline-block">Tomorrow</span>}
+                          <p className="text-2xl font-black text-white">{dayNum}</p>
+                          {isTomorrow && <span className="bg-blue-500/20 text-blue-400 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md mt-1 inline-block">Tomorrow</span>}
                         </div>
                         <div className="space-y-2 mt-auto">
                           {timeSlots.map(time => {
@@ -262,7 +262,7 @@ export default function ServiceRequest() {
                                 className={`w-full py-2 rounded-xl text-xs font-bold transition-all ${
                                   isSelected 
                                     ? 'bg-blue-600 text-white shadow-md' 
-                                    : 'bg-slate-50 text-slate-600 border border-slate-100 hover:border-blue-200 hover:text-blue-600'
+                                    : 'bg-slate-800/50 text-slate-300 border border-white/5 hover:border-blue-500/20 hover:text-blue-400'
                                 }`}
                               >
                                 {time}
@@ -281,13 +281,13 @@ export default function ServiceRequest() {
 
             <button 
               disabled={loading || !form.vehicle_id}
-              className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-sm hover:bg-blue-700 transition-all disabled:opacity-50 mt-4"
+              className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-black/20 hover:bg-blue-700 transition-all disabled:opacity-50 mt-4"
             >
               {loading ? 'Submitting...' : 'Send Service Request'}
             </button>
           </form>
         </div>
       </div>
-    </UserLayout>
+    </AppLayout>
   )
 }

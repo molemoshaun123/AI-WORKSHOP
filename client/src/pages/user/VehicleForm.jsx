@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import UserLayout from '../../layouts/UserLayout'
+import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
 import ConfirmModal from '../../components/ConfirmModal'
 import SlidePanel from '../../components/SlidePanel'
@@ -160,7 +160,7 @@ export default function VehicleForm() {
   }
 
   return (
-    <UserLayout title="My Vehicles">
+    <AppLayout title="My Vehicles">
       <div className="bg-slate-900/60 backdrop-blur-xl border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden">
         <div className="p-8 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -181,10 +181,10 @@ export default function VehicleForm() {
         ) : vehicles.length === 0 ? (
           <div className="p-12 text-center">
             <div className="w-16 h-16 bg-slate-950 border border-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Car className="w-8 h-8 text-slate-600" />
+              <Car className="w-8 h-8 text-slate-300" />
             </div>
             <h3 className="text-lg font-black text-white">No vehicles yet</h3>
-            <p className="text-sm text-slate-500 mt-2">Add your first vehicle to start booking services.</p>
+            <p className="text-sm text-slate-400 mt-2">Add your first vehicle to start booking services.</p>
           </div>
         ) : (
           <div className="grid gap-6 p-8 md:grid-cols-2 xl:grid-cols-3">
@@ -207,13 +207,13 @@ export default function VehicleForm() {
                 <h3 className="text-xl font-black text-white mb-1">{v.year} {v.make}</h3>
                 <p className="text-slate-400 font-bold mb-4">{v.model}</p>
 
-                <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-slate-500 bg-slate-900 rounded-xl p-4 border border-white/5">
+                <div className="grid grid-cols-2 gap-4 text-xs font-semibold text-slate-400 bg-slate-900 rounded-xl p-4 border border-white/5">
                   <div>
-                    <p className="text-[9px] uppercase tracking-widest text-slate-600 mb-1">Reg</p>
+                    <p className="text-[9px] uppercase tracking-widest text-slate-300 mb-1">Reg</p>
                     <p className="text-slate-300">{v.registration_number}</p>
                   </div>
                   <div>
-                    <p className="text-[9px] uppercase tracking-widest text-slate-600 mb-1">Color</p>
+                    <p className="text-[9px] uppercase tracking-widest text-slate-300 mb-1">Color</p>
                     <p className="text-slate-300">{v.color || '-'}</p>
                   </div>
                 </div>
@@ -245,7 +245,7 @@ export default function VehicleForm() {
                 </div>
                 <div>
                   <h3 className="font-bold text-white">{scanning ? 'Extracting details...' : 'Scan License Disk'}</h3>
-                  <p className="text-xs text-slate-500 mt-1">Take a photo to auto-fill details instantly.</p>
+                  <p className="text-xs text-slate-400 mt-1">Take a photo to auto-fill details instantly.</p>
                 </div>
               </div>
             </div>
@@ -304,6 +304,6 @@ export default function VehicleForm() {
         confirmText="Delete Vehicle"
         isDanger={true}
       />
-    </UserLayout>
+    </AppLayout>
   )
 }

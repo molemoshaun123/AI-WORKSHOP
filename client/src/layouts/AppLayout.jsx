@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import NotificationBell from '../components/NotificationBell'
 import { Menu, X } from 'lucide-react'
+import AiCarBot from '../components/AiCarBot'
 
 /* Sidebar nav icon chip colours */
 function NavBadge({ label }) {
@@ -52,7 +53,9 @@ export default function AppLayout({ title, children }) {
     { name: 'Dashboard', path: '/user/dashboard', badge: 'DB' },
     { name: 'My Vehicles', path: '/user/vehicle', badge: 'VH' },
     { name: 'Book Service', path: '/user/service', badge: 'BK' },
-    { name: 'Car Value', path: '/user/car-value', badge: 'CV' },
+    { name: 'Car Evaluation', path: '/user/car-value', badge: 'CV' },
+    { name: 'AI Assistant', path: '/user/diagnosis', badge: 'AI' },
+    { name: 'History', path: '/user/history', badge: 'HS' },
     { name: 'Messages', path: '/inbox', badge: 'MS' },
   ]
 
@@ -188,6 +191,8 @@ export default function AppLayout({ title, children }) {
 
         <main className="mx-auto max-w-7xl p-4 pb-[max(2rem,env(safe-area-inset-bottom))] sm:p-6 lg:p-10">{children}</main>
       </div>
+      
+      {!isAdmin && <AiCarBot />}
     </div>
   )
 }

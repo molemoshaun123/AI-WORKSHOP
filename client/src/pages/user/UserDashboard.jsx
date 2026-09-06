@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Clock, Settings, CheckCircle2, Car, Timer, MessageCircle, Receipt, XCircle } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
-import UserLayout from '../../layouts/UserLayout'
+import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
 import toast from 'react-hot-toast'
 import BookingHelper from './BookingHelper'
@@ -89,36 +89,36 @@ export default function UserDashboard() {
       label: 'Pending',
       value: statusCount('pending'),
       icon: <Clock className="w-6 h-6" />,
-      tone: 'bg-orange-50',
-      border: 'border-orange-100',
-      text: 'text-orange-600',
+      tone: 'bg-orange-500/10',
+      border: 'border-orange-500/10',
+      text: 'text-orange-400',
       iconColor: 'text-orange-500'
     },
     {
       label: 'In Progress',
       value: statusCount('in_progress'),
       icon: <Settings className="w-6 h-6" />,
-      tone: 'bg-blue-50',
-      border: 'border-blue-100',
-      text: 'text-blue-600',
+      tone: 'bg-blue-500/10',
+      border: 'border-blue-500/10',
+      text: 'text-blue-400',
       iconColor: 'text-blue-500'
     },
     {
       label: 'Completed',
       value: statusCount('completed'),
       icon: <CheckCircle2 className="w-6 h-6" />,
-      tone: 'bg-emerald-50',
-      border: 'border-emerald-100',
-      text: 'text-emerald-600',
+      tone: 'bg-emerald-500/10',
+      border: 'border-emerald-500/10',
+      text: 'text-emerald-400',
       iconColor: 'text-emerald-500'
     },
     {
       label: 'Vehicles',
       value: vehicles.length,
       icon: <Car className="w-6 h-6" />,
-      tone: 'bg-violet-50',
-      border: 'border-violet-100',
-      text: 'text-violet-600',
+      tone: 'bg-violet-500/10',
+      border: 'border-violet-500/10',
+      text: 'text-violet-400',
       iconColor: 'text-violet-500'
     },
   ]
@@ -144,28 +144,28 @@ export default function UserDashboard() {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'completed':
-        return 'bg-emerald-100 text-emerald-700 border-emerald-200'
+        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/20'
       case 'pending':
-        return 'bg-orange-100 text-orange-700 border-orange-200'
+        return 'bg-orange-500/20 text-orange-400 border-orange-500/20'
       case 'diagnosed':
-        return 'bg-violet-100 text-violet-700 border-violet-200'
+        return 'bg-violet-500/20 text-violet-400 border-violet-500/20'
       case 'in_progress':
-        return 'bg-blue-100 text-blue-700 border-blue-200'
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/20'
       default:
-        return 'bg-slate-100 text-slate-700 border-slate-200'
+        return 'bg-slate-800/80 text-slate-300 border-white/10'
     }
   }
 
   const getPriorityBadge = (priority) => {
     switch (priority) {
       case 'urgent':
-        return 'bg-red-100 text-red-700 border-red-200'
+        return 'bg-red-500/20 text-red-400 border-red-500/20'
       case 'high':
-        return 'bg-orange-100 text-orange-700 border-orange-200'
+        return 'bg-orange-500/20 text-orange-400 border-orange-500/20'
       case 'medium':
-        return 'bg-blue-100 text-blue-700 border-blue-200'
+        return 'bg-blue-500/20 text-blue-400 border-blue-500/20'
       default:
-        return 'bg-slate-100 text-slate-600 border-slate-200'
+        return 'bg-slate-800/80 text-slate-300 border-white/10'
     }
   }
 
@@ -236,26 +236,26 @@ export default function UserDashboard() {
   }
 
   return (
-    <UserLayout title="Overview">
+    <AppLayout title="Overview">
       <div className="space-y-8">
         <section className="grid gap-6 xl:grid-cols-12">
           <div className="xl:col-span-8 space-y-6">
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white p-8 shadow-sm sm:p-10">
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-8 shadow-xl shadow-black/20 sm:p-10">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent" />
-              <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-blue-100/50 blur-3xl" />
-              <div className="absolute -bottom-20 left-1/4 h-56 w-56 rounded-full bg-indigo-100/50 blur-3xl" />
+              <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-blue-500/20/50 blur-3xl" />
+              <div className="absolute -bottom-20 left-1/4 h-56 w-56 rounded-full bg-indigo-500/20/50 blur-3xl" />
 
               <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
                 <div className="max-w-3xl">
-                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.25em] text-blue-700">
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.25em] text-blue-400">
                     Welcome Back
                   </div>
 
-                  <h2 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl lg:text-5xl">
+                  <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
                     Hello, {user?.full_name?.split(' ')[0] || 'Driver'}
                   </h2>
 
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+                  <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
                     Track your bookings, follow repair progress, view your vehicles, and stay connected with the workshop in one place.
                   </p>
 
@@ -268,7 +268,7 @@ export default function UserDashboard() {
                     </Link>
                     <Link
                       to="/user/car-value"
-                      className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50 hover:-translate-y-0.5"
+                      className="rounded-2xl border border-white/10 bg-slate-900/60 px-5 py-3 text-sm font-black text-slate-300 shadow-xl shadow-black/20 transition hover:bg-slate-800/50 hover:-translate-y-0.5"
                     >
                       Evaluate Car
                     </Link>
@@ -296,41 +296,41 @@ export default function UserDashboard() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-2">
-              <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8 relative overflow-hidden group">
+              <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-6 shadow-xl shadow-black/20 sm:p-8 relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
                 <div className="mb-5 flex items-center justify-between">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Upcoming Booking</p>
-                    <h3 className="mt-2 text-xl font-black text-slate-900">
+                    <h3 className="mt-2 text-xl font-black text-white">
                       {nextBooking ? 'Next Appointment' : 'No Appointment Yet'}
                     </h3>
                   </div>
-                  <div className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
+                  <div className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">
                     Booking
                   </div>
                 </div>
 
-                <p className="text-sm leading-7 text-slate-600">
+                <p className="text-sm leading-7 text-slate-300">
                   {nextBooking
                     ? new Date(nextBooking.appointment_date).toLocaleString()
                     : 'Use the booking helper to choose a service and reserve your next visit.'}
                 </p>
 
                 {nextBooking && (
-                  <div className="mt-5 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
-                    <p className="text-lg font-black text-slate-900">{nextBooking.title}</p>
-                    <p className="mt-2 text-sm text-slate-500 line-clamp-2">{nextBooking.symptoms}</p>
+                  <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-slate-800/50 p-4">
+                    <p className="text-lg font-black text-white">{nextBooking.title}</p>
+                    <p className="mt-2 text-sm text-slate-400 line-clamp-2">{nextBooking.symptoms}</p>
                   </div>
                 )}
               </div>
 
-              <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+              <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-6 shadow-xl shadow-black/20 sm:p-8">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Quick Access</p>
-                    <h3 className="mt-2 text-xl font-black text-slate-900">My Workspace</h3>
+                    <h3 className="mt-2 text-xl font-black text-white">My Workspace</h3>
                   </div>
-                  <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600">
+                  <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
                     Ready
                   </div>
                 </div>
@@ -338,40 +338,40 @@ export default function UserDashboard() {
                 <div className="grid grid-cols-2 gap-3">
                   <Link
                     to="/user/vehicle"
-                    className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-4 transition hover:bg-slate-100 hover:border-slate-200"
+                    className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-white/10"
                   >
                     <Car className="w-8 h-8 text-violet-500" />
-                    <p className="mt-3 text-base font-black text-slate-900">Vehicles</p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-3 text-base font-black text-white">Vehicles</p>
+                    <p className="mt-1 text-xs text-slate-400">
                       {vehicleLoading ? 'Loading...' : `${vehicles.length} saved`}
                     </p>
                   </Link>
 
                   <Link
                     to="/user/car-value"
-                    className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-4 transition hover:bg-slate-100 hover:border-slate-200"
+                    className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-white/10"
                   >
                     <Timer className="w-8 h-8 text-orange-500" />
-                    <p className="mt-3 text-base font-black text-slate-900">Car Evaluation</p>
-                    <p className="mt-1 text-xs text-slate-500">Value your car</p>
+                    <p className="mt-3 text-base font-black text-white">Car Evaluation</p>
+                    <p className="mt-1 text-xs text-slate-400">Value your car</p>
                   </Link>
 
                   <Link
                     to="/user/diagnosis"
-                    className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-4 transition hover:bg-slate-100 hover:border-slate-200"
+                    className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-white/10"
                   >
                     <Settings className="w-8 h-8 text-blue-500" />
-                    <p className="mt-3 text-base font-black text-slate-900">Vehicle Assistant</p>
-                    <p className="mt-1 text-xs text-slate-500">Car diagnostics</p>
+                    <p className="mt-3 text-base font-black text-white">Vehicle Assistant</p>
+                    <p className="mt-1 text-xs text-slate-400">Car diagnostics</p>
                   </Link>
 
                   <Link
                     to="/inbox"
-                    className="rounded-[1.5rem] border border-indigo-100 bg-indigo-50 p-4 transition hover:bg-indigo-100 hover:border-indigo-200"
+                    className="rounded-[1.5rem] border border-indigo-500/10 bg-indigo-500/10 p-4 transition hover:bg-indigo-500/20 hover:border-indigo-500/20"
                   >
                     <MessageCircle className="w-8 h-8 text-indigo-500" />
-                    <p className="mt-3 text-base font-black text-slate-900">Messages</p>
-                    <p className="mt-1 text-xs text-indigo-600">Talk to workshop</p>
+                    <p className="mt-3 text-base font-black text-white">Messages</p>
+                    <p className="mt-1 text-xs text-indigo-400">Talk to workshop</p>
                   </Link>
                 </div>
               </div>
@@ -382,9 +382,9 @@ export default function UserDashboard() {
             
             {/* ACTION NEEDED PANEL */}
             {(actionItems.pendingQuotes.length > 0 || actionItems.unpaidInvoices.length > 0) && (
-              <div className="rounded-[2rem] border border-orange-200 bg-orange-50/50 p-6 shadow-sm relative overflow-hidden">
+              <div className="rounded-[2rem] border border-orange-500/20 bg-orange-500/10/50 p-6 shadow-xl shadow-black/20 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-1.5 h-full bg-orange-500"></div>
-                <h3 className="text-xl font-black text-slate-900 mb-4 flex items-center gap-2">
+                <h3 className="text-xl font-black text-white mb-4 flex items-center gap-2">
                   <span className="relative flex h-3 w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
@@ -394,29 +394,29 @@ export default function UserDashboard() {
                 
                 <div className="space-y-4">
                   {actionItems.pendingQuotes.map(q => (
-                    <div key={q.quote_id} className="bg-white rounded-2xl p-4 border border-orange-100 shadow-sm">
+                    <div key={q.quote_id} className="bg-slate-900/60 rounded-2xl p-4 border border-orange-500/10 shadow-xl shadow-black/20">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Quote Approval</p>
-                          <p className="font-bold text-slate-900">{q.title}</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Quote Approval</p>
+                          <p className="font-bold text-white">{q.title}</p>
                         </div>
-                        <p className="text-lg font-black text-orange-600">R{Number(q.amount).toFixed(2)}</p>
+                        <p className="text-lg font-black text-orange-400">R{Number(q.amount).toFixed(2)}</p>
                       </div>
                       <div className="flex gap-2 mt-3">
                         <button onClick={() => handleQuote(q.quote_id, 'approved')} className="flex-1 bg-blue-600 text-white font-bold text-xs py-2 rounded-xl hover:bg-blue-700 transition">Approve</button>
-                        <button onClick={() => handleQuote(q.quote_id, 'declined')} className="flex-1 bg-slate-100 text-slate-600 font-bold text-xs py-2 rounded-xl hover:bg-slate-200 transition">Decline</button>
+                        <button onClick={() => handleQuote(q.quote_id, 'declined')} className="flex-1 bg-slate-800/80 text-slate-300 font-bold text-xs py-2 rounded-xl hover:bg-slate-700 transition">Decline</button>
                       </div>
                     </div>
                   ))}
 
                   {actionItems.unpaidInvoices.map(i => (
-                    <div key={i.invoice_id} className="bg-white rounded-2xl p-4 border border-emerald-100 shadow-sm">
+                    <div key={i.invoice_id} className="bg-slate-900/60 rounded-2xl p-4 border border-emerald-500/10 shadow-xl shadow-black/20">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Invoice Due</p>
-                          <p className="font-bold text-slate-900">{i.title}</p>
+                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Invoice Due</p>
+                          <p className="font-bold text-white">{i.title}</p>
                         </div>
-                        <p className="text-lg font-black text-emerald-600">R{Number(i.amount).toFixed(2)}</p>
+                        <p className="text-lg font-black text-emerald-400">R{Number(i.amount).toFixed(2)}</p>
                       </div>
                       <button onClick={() => setPayingInvoice(i)} className="w-full bg-emerald-600 text-white font-bold text-xs py-2 rounded-xl hover:bg-emerald-700 transition mt-2 flex items-center justify-center gap-2">
                         <Receipt className="w-4 h-4" /> Pay Now
@@ -427,18 +427,18 @@ export default function UserDashboard() {
               </div>
             )}
 
-            <div className="rounded-[2rem] border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+            <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-4 shadow-xl shadow-black/20 sm:p-5">
               <BookingHelper vehicles={vehicles} />
             </div>
           </div>
         </section>
 
-        <section className="overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-sm print:shadow-none print:border-none">
-          <div className="flex flex-col gap-4 border-b border-slate-100 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8 bg-slate-50">
+        <section className="overflow-hidden rounded-[2.5rem] border border-white/10 bg-slate-900/60 shadow-xl shadow-black/20 print:shadow-none print:border-none">
+          <div className="flex flex-col gap-4 border-b border-white/5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8 bg-slate-800/50">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Service Tracking</p>
-              <h3 className="mt-2 text-2xl font-black text-slate-900">My Service Jobs</h3>
-              <p className="mt-2 text-sm font-semibold text-slate-600">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Service Tracking</p>
+              <h3 className="mt-2 text-2xl font-black text-white">My Service Jobs</h3>
+              <p className="mt-2 text-sm font-semibold text-slate-300">
                 Live status, mechanic updates, and timeline history for your service requests.
               </p>
             </div>
@@ -446,13 +446,13 @@ export default function UserDashboard() {
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/user/vehicle"
-                className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
+                className="rounded-2xl border border-white/10 bg-slate-900/60 px-5 py-3 text-sm font-black text-slate-300 shadow-xl shadow-black/20 transition hover:bg-slate-800/50"
               >
                 Add Vehicle
               </Link>
               <Link
                 to="/user/service"
-                className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-sm transition hover:bg-blue-700"
+                className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-xl shadow-black/20 transition hover:bg-blue-700"
               >
                 Book Service
               </Link>
@@ -464,11 +464,11 @@ export default function UserDashboard() {
               {[...Array(3)].map((_, index) => (
                 <div
                   key={index}
-                  className="animate-pulse rounded-[2rem] border border-slate-200 bg-slate-50 p-6"
+                  className="animate-pulse rounded-[2rem] border border-white/10 bg-slate-800/50 p-6"
                 >
-                  <div className="h-6 w-1/3 rounded bg-slate-200" />
-                  <div className="mt-4 h-4 w-2/3 rounded bg-slate-200" />
-                  <div className="mt-6 h-2 w-full rounded bg-slate-200" />
+                  <div className="h-6 w-1/3 rounded bg-slate-700" />
+                  <div className="mt-4 h-4 w-2/3 rounded bg-slate-700" />
+                  <div className="mt-6 h-2 w-full rounded bg-slate-700" />
                 </div>
               ))}
             </div>
@@ -476,19 +476,19 @@ export default function UserDashboard() {
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-12 text-center flex flex-col items-center justify-center bg-white"
+              className="p-12 text-center flex flex-col items-center justify-center bg-slate-900/60"
             >
-              <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center border border-blue-100 mb-6">
+              <div className="w-24 h-24 bg-blue-500/10 rounded-full flex items-center justify-center border border-blue-500/10 mb-6">
                 <Car className="w-12 h-12 text-blue-500" />
               </div>
-              <p className="text-2xl font-black text-slate-900">No service jobs yet</p>
-              <p className="mt-3 text-sm text-slate-500 max-w-sm">
+              <p className="text-2xl font-black text-white">No service jobs yet</p>
+              <p className="mt-3 text-sm text-slate-400 max-w-sm">
                 Start by adding a vehicle and booking your first service request. We'll track every step here.
               </p>
               <div className="mt-8 flex justify-center gap-3">
                 <Link
                   to="/user/vehicle"
-                  className="rounded-2xl border border-slate-200 bg-white px-6 py-3 text-sm font-black text-slate-700 transition hover:bg-slate-50 shadow-sm"
+                  className="rounded-2xl border border-white/10 bg-slate-900/60 px-6 py-3 text-sm font-black text-slate-300 transition hover:bg-slate-800/50 shadow-xl shadow-black/20"
                 >
                   Add Vehicle
                 </Link>
@@ -501,21 +501,21 @@ export default function UserDashboard() {
               </div>
             </motion.div>
           ) : (
-            <div className="space-y-5 p-6 sm:p-8 bg-white">
+            <div className="space-y-5 p-6 sm:p-8 bg-slate-900/60">
               {jobs.map((job) => {
                 const progress = getProgress(job.status)
 
                 return (
                   <div
                     key={job.job_id}
-                    className="group relative overflow-hidden rounded-[2rem] border border-slate-200 bg-slate-50 p-6 transition hover:border-blue-200 hover:bg-blue-50/30"
+                    className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-slate-800/50 p-6 transition hover:border-blue-500/20 hover:bg-blue-500/10/30"
                   >
                     <div className={`absolute left-0 top-0 h-full w-1.5 ${job.status === 'completed' ? 'bg-emerald-500' : 'bg-blue-500'}`} />
 
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="mb-3 flex flex-wrap items-center gap-3">
-                          <h4 className="text-xl font-black text-slate-900">{job.title}</h4>
+                          <h4 className="text-xl font-black text-white">{job.title}</h4>
 
                           <span
                             className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${getPriorityBadge(job.priority)}`}
@@ -530,7 +530,7 @@ export default function UserDashboard() {
                           </span>
                         </div>
 
-                        <p className="line-clamp-2 text-sm font-semibold leading-7 text-slate-600">
+                        <p className="line-clamp-2 text-sm font-semibold leading-7 text-slate-300">
                           {job.symptoms}
                         </p>
 
@@ -542,7 +542,7 @@ export default function UserDashboard() {
                           {job.appointment_date && (
                             <>
                               <span>•</span>
-                              <span className="text-blue-600">
+                              <span className="text-blue-400">
                                 Booked {new Date(job.appointment_date).toLocaleString()}
                               </span>
                             </>
@@ -551,7 +551,7 @@ export default function UserDashboard() {
                           {job.mechanic_name && (
                             <>
                               <span>•</span>
-                              <span className="text-emerald-600">Mechanic {job.mechanic_name}</span>
+                              <span className="text-emerald-400">Mechanic {job.mechanic_name}</span>
                             </>
                           )}
                         </div>
@@ -559,11 +559,11 @@ export default function UserDashboard() {
 
                       <div className="flex w-full flex-col gap-4 lg:max-w-[220px] lg:items-end">
                         <div className="w-full">
-                          <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.15em] text-slate-500">
+                          <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">
                             <span>Progress</span>
                             <span>{progress}%</span>
                           </div>
-                          <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-200">
+                          <div className="h-2.5 w-full overflow-hidden rounded-full bg-slate-700">
                             <div
                               className={`h-full rounded-full transition-all duration-1000 ${
                                 job.status === 'completed' ? 'bg-emerald-500' : 'bg-blue-500'
@@ -576,7 +576,7 @@ export default function UserDashboard() {
                         <div className="flex flex-wrap gap-3 lg:justify-end">
                           <Link
                             to="/inbox"
-                            className="inline-flex items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-blue-700 transition hover:bg-blue-100"
+                            className="inline-flex items-center gap-2 rounded-2xl border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-blue-400 transition hover:bg-blue-500/20"
                           >
                             <MessageCircle className="w-3 h-3" />
                             Message Workshop
@@ -585,7 +585,7 @@ export default function UserDashboard() {
                           <button
                             type="button"
                             onClick={() => toggleHistory(job.job_id)}
-                            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 shadow-sm"
+                            className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-300 transition hover:bg-slate-800/50 hover:text-white shadow-xl shadow-black/20"
                           >
                             <Receipt className="w-3 h-3" />
                             {openHistoryJobId === job.job_id ? 'Hide Timeline' : 'View Timeline'}
@@ -595,7 +595,7 @@ export default function UserDashboard() {
                               <button
                                 type="button"
                                 onClick={() => downloadInvoice(job.job_id)}
-                                className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 shadow-sm"
+                                className="inline-flex items-center gap-2 rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-slate-300 transition hover:bg-slate-800/50 hover:text-white shadow-xl shadow-black/20"
                               >
                                 Print Invoice
                               </button>
@@ -605,7 +605,7 @@ export default function UserDashboard() {
                             <button
                               type="button"
                               onClick={() => setCancellingJob(job)}
-                              className="inline-flex items-center gap-2 rounded-2xl border border-red-200 bg-red-50 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-red-600 transition hover:bg-red-100 shadow-sm"
+                              className="inline-flex items-center gap-2 rounded-2xl border border-red-500/20 bg-red-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-red-400 transition hover:bg-red-500/20 shadow-xl shadow-black/20"
                             >
                               <XCircle className="w-3 h-3" />
                               Cancel Job
@@ -616,8 +616,8 @@ export default function UserDashboard() {
                     </div>
 
                     {job.status === 'completed' && !job.rating && (
-                      <div className="mt-4 pt-4 border-t border-slate-200">
-                        <p className="text-sm font-bold text-slate-900 mb-2">Rate your experience</p>
+                      <div className="mt-4 pt-4 border-t border-white/10">
+                        <p className="text-sm font-bold text-white mb-2">Rate your experience</p>
                         <StarRating 
                           initialRating={0} 
                           onSubmit={(rating, comment) => rateJob(job.job_id, rating, comment)} 
@@ -626,8 +626,8 @@ export default function UserDashboard() {
                       </div>
                     )}
                     {job.status === 'completed' && job.rating && (
-                      <div className="mt-4 pt-4 border-t border-slate-200">
-                        <p className="text-sm font-bold text-slate-900 mb-2">Your Rating</p>
+                      <div className="mt-4 pt-4 border-t border-white/10">
+                        <p className="text-sm font-bold text-white mb-2">Your Rating</p>
                         <StarRating 
                           initialRating={job.rating} 
                           readonly={true} 
@@ -642,23 +642,23 @@ export default function UserDashboard() {
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="mt-6 rounded-[1.75rem] border border-slate-200 bg-white p-5 overflow-hidden shadow-sm">
+                        className="mt-6 rounded-[1.75rem] border border-white/10 bg-slate-900/60 p-5 overflow-hidden shadow-xl shadow-black/20">
                         <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                           <div>
                             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
                               Job Timeline
                             </p>
-                            <h5 className="mt-2 text-lg font-black text-slate-900">Recent Activity</h5>
+                            <h5 className="mt-2 text-lg font-black text-white">Recent Activity</h5>
                           </div>
 
-                          <div className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-600">
+                          <div className="rounded-full border border-white/10 bg-slate-800/50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-300">
                             {(historyByJobId[job.job_id] || []).length} events
                           </div>
                         </div>
 
                         {(historyByJobId[job.job_id] || []).length === 0 ? (
-                          <div className="rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-                            <p className="text-sm font-bold text-slate-500">No timeline events yet.</p>
+                          <div className="rounded-[1.5rem] border border-dashed border-slate-700 bg-slate-800/50 p-6 text-center">
+                            <p className="text-sm font-bold text-slate-400">No timeline events yet.</p>
                           </div>
                         ) : (
                           <div className="space-y-3">
@@ -669,26 +669,26 @@ export default function UserDashboard() {
                               .map((h) => (
                                 <div
                                   key={h.history_id}
-                                  className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-4"
+                                  className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4"
                                 >
                                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                     <div>
-                                      <p className="text-sm font-black text-slate-900">{h.status}</p>
-                                      <p className="mt-1 text-xs font-bold text-slate-500">
+                                      <p className="text-sm font-black text-white">{h.status}</p>
+                                      <p className="mt-1 text-xs font-bold text-slate-400">
                                         {h.changed_by_name || 'Workshop'} •{' '}
                                         {new Date(h.changed_at).toLocaleString()}
                                       </p>
                                     </div>
 
                                     {h.notes && (
-                                      <p className="max-w-xl text-sm font-semibold text-slate-600 sm:text-right">
+                                      <p className="max-w-xl text-sm font-semibold text-slate-300 sm:text-right">
                                         {h.notes}
                                       </p>
                                     )}
                                   </div>
                                   
                                   {h.image_url && (
-                                    <div className="mt-4 rounded-xl overflow-hidden border border-slate-200 bg-white shadow-sm">
+                                    <div className="mt-4 rounded-xl overflow-hidden border border-white/10 bg-slate-900/60 shadow-xl shadow-black/20">
                                       <img src={h.image_url} alt="Timeline update" className="w-full h-auto max-h-64 object-cover" />
                                     </div>
                                   )}
@@ -726,6 +726,6 @@ export default function UserDashboard() {
         confirmText="Pay Securely"
         isDanger={false}
       />
-    </UserLayout>
+    </AppLayout>
   )
 }

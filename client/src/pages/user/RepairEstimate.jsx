@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import toast from 'react-hot-toast'
 import { useAuth } from '../../context/AuthContext'
-import UserLayout from '../../layouts/UserLayout'
+import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
 import { Camera, ChevronRight, ChevronLeft, Upload, X, TrendingUp, TrendingDown, DollarSign, Star, Car, Gauge, FileText, Sparkles } from 'lucide-react'
 
@@ -200,13 +200,13 @@ export default function CarValuator() {
                 ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-90'
                 : i === step
                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/40 scale-110'
-                : 'bg-slate-100 text-slate-400 border border-slate-200'
+                : 'bg-slate-800/80 text-slate-400 border border-white/10'
             }`}
           >
             {i < step ? '✓' : i + 1}
           </div>
           {i < STEPS.length - 1 && (
-            <div className={`hidden sm:block w-8 h-0.5 rounded-full transition-all duration-500 ${i < step ? 'bg-emerald-400' : 'bg-slate-200'}`} />
+            <div className={`hidden sm:block w-8 h-0.5 rounded-full transition-all duration-500 ${i < step ? 'bg-emerald-400' : 'bg-slate-700'}`} />
           )}
         </div>
       ))}
@@ -216,8 +216,8 @@ export default function CarValuator() {
   const renderStep0 = () => (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="text-center mb-2">
-        <h3 className="text-2xl font-black text-slate-900 tracking-tight">Which vehicle do you want to value?</h3>
-        <p className="text-slate-500 font-semibold text-sm mt-2">Select a registered vehicle or enter details manually.</p>
+        <h3 className="text-2xl font-black text-white tracking-tight">Which vehicle do you want to value?</h3>
+        <p className="text-slate-400 font-semibold text-sm mt-2">Select a registered vehicle or enter details manually.</p>
       </div>
 
       {vehicles.length > 0 && !manualEntry && (
@@ -229,18 +229,18 @@ export default function CarValuator() {
               onClick={() => handleVehicleSelect(v.vehicle_id)}
               className={`w-full text-left p-5 rounded-2xl border-2 transition-all duration-300 flex items-center gap-4 group ${
                 vehicleId === v.vehicle_id
-                  ? 'border-blue-500 bg-blue-50 shadow-md shadow-blue-500/10'
-                  : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-blue-50/50'
+                  ? 'border-blue-500 bg-blue-500/10 shadow-md shadow-blue-500/10'
+                  : 'border-white/10 bg-slate-900/60 hover:border-blue-300 hover:bg-blue-500/10/50'
               }`}
             >
               <div className={`h-12 w-12 rounded-xl flex items-center justify-center transition-colors ${
-                vehicleId === v.vehicle_id ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-blue-100 group-hover:text-blue-600'
+                vehicleId === v.vehicle_id ? 'bg-blue-600 text-white' : 'bg-slate-800/80 text-slate-400 group-hover:bg-blue-500/20 group-hover:text-blue-400'
               }`}>
                 <Car className="w-6 h-6" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-black text-slate-900 text-lg">{v.year} {v.make} {v.model}</p>
-                <p className="text-slate-500 text-sm font-semibold">{v.registration_number} {v.color ? `• ${v.color}` : ''}</p>
+                <p className="font-black text-white text-lg">{v.year} {v.make} {v.model}</p>
+                <p className="text-slate-400 text-sm font-semibold">{v.registration_number} {v.color ? `• ${v.color}` : ''}</p>
               </div>
               {vehicleId === v.vehicle_id && (
                 <div className="h-6 w-6 rounded-full bg-blue-600 flex items-center justify-center">
@@ -257,7 +257,7 @@ export default function CarValuator() {
           <button
             type="button"
             onClick={handleManualToggle}
-            className="text-blue-600 font-bold text-sm underline underline-offset-4 hover:text-blue-700 transition-colors"
+            className="text-blue-400 font-bold text-sm underline underline-offset-4 hover:text-blue-400 transition-colors"
           >
             Or enter details manually →
           </button>
@@ -270,54 +270,54 @@ export default function CarValuator() {
             <button
               type="button"
               onClick={() => { setManualEntry(false); if (vehicles.length > 0) setVehicleId(vehicles[0].vehicle_id); handleVehicleSelect(vehicles[0].vehicle_id) }}
-              className="text-blue-600 font-bold text-sm underline underline-offset-4 hover:text-blue-700 transition-colors"
+              className="text-blue-400 font-bold text-sm underline underline-offset-4 hover:text-blue-400 transition-colors"
             >
               ← Select a registered vehicle instead
             </button>
           )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Make *</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Make *</label>
               <input
                 value={form.make}
                 onChange={(e) => setForm({ ...form, make: e.target.value })}
                 placeholder="e.g. Toyota"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Model *</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Model *</label>
               <input
                 value={form.model}
                 onChange={(e) => setForm({ ...form, model: e.target.value })}
                 placeholder="e.g. Corolla"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Year *</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Year *</label>
               <input
                 type="number"
                 value={form.year}
                 onChange={(e) => setForm({ ...form, year: e.target.value })}
                 placeholder="e.g. 2020"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Color</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Color</label>
               <input
                 value={form.color}
                 onChange={(e) => setForm({ ...form, color: e.target.value })}
                 placeholder="e.g. White"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               />
             </div>
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Original Purchase Price (Optional)</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Original Purchase Price (Optional)</label>
             <div className="relative">
               <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -325,7 +325,7 @@ export default function CarValuator() {
                 value={form.original_price}
                 onChange={(e) => setForm({ ...form, original_price: e.target.value })}
                 placeholder="e.g. 250000"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                className="w-full bg-slate-800/50 border border-white/10 rounded-xl pl-10 pr-4 py-3.5 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               />
             </div>
             <p className="text-[10px] text-slate-400">If left blank, AI will estimate the new retail price.</p>
@@ -338,13 +338,13 @@ export default function CarValuator() {
   const renderStep1 = () => (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="text-center mb-2">
-        <h3 className="text-2xl font-black text-slate-900 tracking-tight">Condition & Details</h3>
-        <p className="text-slate-500 font-semibold text-sm mt-2">Help us assess your vehicle's current state.</p>
+        <h3 className="text-2xl font-black text-white tracking-tight">Condition & Details</h3>
+        <p className="text-slate-400 font-semibold text-sm mt-2">Help us assess your vehicle's current state.</p>
       </div>
 
       {/* Mileage */}
       <div className="space-y-1">
-        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Current Mileage (km) *</label>
+        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Current Mileage (km) *</label>
         <div className="relative">
           <Gauge className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <input
@@ -352,14 +352,14 @@ export default function CarValuator() {
             value={form.mileage}
             onChange={(e) => setForm({ ...form, mileage: e.target.value })}
             placeholder="e.g. 85000"
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-12 pr-4 py-4 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            className="w-full bg-slate-800/50 border border-white/10 rounded-xl pl-12 pr-4 py-4 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
           />
         </div>
       </div>
 
       {/* Condition */}
       <div className="space-y-2">
-        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Overall Condition *</label>
+        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Overall Condition *</label>
         <div className="grid grid-cols-2 gap-3">
           {CONDITIONS.map((c) => (
             <button
@@ -368,15 +368,15 @@ export default function CarValuator() {
               onClick={() => setForm({ ...form, condition: c.value })}
               className={`p-4 rounded-xl border-2 text-left transition-all duration-300 ${
                 form.condition === c.value
-                  ? 'border-blue-500 bg-blue-50 shadow-md shadow-blue-500/10'
-                  : 'border-slate-200 bg-white hover:border-blue-300'
+                  ? 'border-blue-500 bg-blue-500/10 shadow-md shadow-blue-500/10'
+                  : 'border-white/10 bg-slate-900/60 hover:border-blue-300'
               }`}
             >
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-lg">{c.emoji}</span>
-                <span className="font-black text-sm text-slate-900">{c.label}</span>
+                <span className="font-black text-sm text-white">{c.label}</span>
               </div>
-              <p className="text-[11px] font-semibold text-slate-500">{c.desc}</p>
+              <p className="text-[11px] font-semibold text-slate-400">{c.desc}</p>
             </button>
           ))}
         </div>
@@ -385,21 +385,21 @@ export default function CarValuator() {
       {/* Transmission & Fuel */}
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Transmission</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Transmission</label>
           <select
             value={form.transmission}
             onChange={(e) => setForm({ ...form, transmission: e.target.value })}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+            className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
           >
             {TRANSMISSIONS.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div className="space-y-1">
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Fuel Type</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Fuel Type</label>
           <select
             value={form.fuel_type}
             onChange={(e) => setForm({ ...form, fuel_type: e.target.value })}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+            className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
           >
             {FUEL_TYPES.map((f) => <option key={f} value={f}>{f}</option>)}
           </select>
@@ -408,7 +408,7 @@ export default function CarValuator() {
 
       {/* Service History */}
       <div className="space-y-2">
-        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Service History</label>
+        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Service History</label>
         <div className="flex gap-3">
           {SERVICE_HISTORY.map((s) => (
             <button
@@ -417,8 +417,8 @@ export default function CarValuator() {
               onClick={() => setForm({ ...form, service_history: s.value })}
               className={`flex-1 py-3 rounded-xl border-2 text-xs font-black transition-all duration-300 ${
                 form.service_history === s.value
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300'
+                  ? 'border-blue-500 bg-blue-500/10 text-blue-400'
+                  : 'border-white/10 bg-slate-900/60 text-slate-300 hover:border-blue-300'
               }`}
             >
               {s.label}
@@ -429,11 +429,11 @@ export default function CarValuator() {
 
       {/* Province */}
       <div className="space-y-1">
-        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Province</label>
+        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Province</label>
         <select
           value={form.province}
           onChange={(e) => setForm({ ...form, province: e.target.value })}
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+          className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
         >
           {PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
         </select>
@@ -441,12 +441,12 @@ export default function CarValuator() {
 
       {/* Modifications */}
       <div className="space-y-1">
-        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">Modifications (Optional)</label>
+        <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Modifications (Optional)</label>
         <input
           value={form.modifications}
           onChange={(e) => setForm({ ...form, modifications: e.target.value })}
           placeholder="e.g. Aftermarket exhaust, lowered suspension..."
-          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          className="w-full bg-slate-800/50 border border-white/10 rounded-xl px-4 py-3.5 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
         />
       </div>
     </div>
@@ -457,8 +457,8 @@ export default function CarValuator() {
     return (
       <div className="space-y-6 animate-in fade-in duration-500">
         <div className="text-center mb-2">
-          <h3 className="text-2xl font-black text-slate-900 tracking-tight">Upload Photos</h3>
-          <p className="text-slate-500 font-semibold text-sm mt-2">Optional — photos help the AI assess visual condition for a more accurate valuation.</p>
+          <h3 className="text-2xl font-black text-white tracking-tight">Upload Photos</h3>
+          <p className="text-slate-400 font-semibold text-sm mt-2">Optional — photos help the AI assess visual condition for a more accurate valuation.</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -487,7 +487,7 @@ export default function CarValuator() {
                   </button>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center h-36 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer group">
+                <label className="flex flex-col items-center justify-center h-36 rounded-2xl border-2 border-dashed border-white/10 bg-slate-800/50/50 hover:border-blue-400 hover:bg-blue-500/10/50 transition-all cursor-pointer group">
                   <input
                     type="file"
                     accept="image/*"
@@ -495,7 +495,7 @@ export default function CarValuator() {
                     className="hidden"
                   />
                   <span className="text-2xl mb-1">{slot.emoji}</span>
-                  <span className="text-xs font-black text-slate-500 uppercase tracking-widest">{slot.label}</span>
+                  <span className="text-xs font-black text-slate-400 uppercase tracking-widest">{slot.label}</span>
                   <span className="text-[10px] font-semibold text-slate-400 mt-1">Tap or drag</span>
                 </label>
               )}
@@ -503,8 +503,8 @@ export default function CarValuator() {
           ))}
         </div>
 
-        <div className="p-4 rounded-xl bg-blue-50 border border-blue-100 text-center">
-          <p className="text-xs font-bold text-blue-700">
+        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/10 text-center">
+          <p className="text-xs font-bold text-blue-400">
             {photoCount === 0
               ? '📷 No photos added — valuation will be based on details only.'
               : `📸 ${photoCount} photo${photoCount > 1 ? 's' : ''} added — AI will analyze visual condition.`}
@@ -575,10 +575,10 @@ export default function CarValuator() {
         {/* Condition badge */}
         {valuation.condition_rating && (
           <div className={`p-4 rounded-2xl text-center font-black uppercase tracking-widest text-sm ${
-            valuation.condition_rating === 'Excellent' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
-            : valuation.condition_rating === 'Good' ? 'bg-blue-50 border border-blue-200 text-blue-700'
-            : valuation.condition_rating === 'Fair' ? 'bg-amber-50 border border-amber-200 text-amber-700'
-            : 'bg-red-50 border border-red-200 text-red-700'
+            valuation.condition_rating === 'Excellent' ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+            : valuation.condition_rating === 'Good' ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400'
+            : valuation.condition_rating === 'Fair' ? 'bg-amber-500/10 border border-amber-500/20 text-amber-400'
+            : 'bg-red-500/10 border border-red-500/20 text-red-400'
           }`}>
             Overall Condition: {valuation.condition_rating}
           </div>
@@ -586,49 +586,49 @@ export default function CarValuator() {
 
         {/* Market Selling Options */}
         <div className="space-y-4">
-          <h4 className="font-black text-lg text-slate-900 px-1">Selling Options</h4>
+          <h4 className="font-black text-lg text-white px-1">Selling Options</h4>
           <div className="grid sm:grid-cols-3 gap-4">
-            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm relative overflow-hidden">
+            <div className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 shadow-xl shadow-black/20 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-slate-400"></div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Dealer Trade-in</p>
-              <p className="text-2xl font-black text-slate-900">{formatZAR(tradeIn)}</p>
-              <p className="text-xs font-semibold text-slate-500 mt-2">Fastest sale, lowest price. Dealers buy at a discount to make a margin.</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Dealer Trade-in</p>
+              <p className="text-2xl font-black text-white">{formatZAR(tradeIn)}</p>
+              <p className="text-xs font-semibold text-slate-400 mt-2">Fastest sale, lowest price. Dealers buy at a discount to make a margin.</p>
             </div>
             
-            <div className="p-5 rounded-2xl bg-blue-50 border border-blue-200 shadow-sm relative overflow-hidden transform sm:-translate-y-2">
+            <div className="p-5 rounded-2xl bg-blue-500/10 border border-blue-500/20 shadow-xl shadow-black/20 relative overflow-hidden transform sm:-translate-y-2">
               <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
               <div className="absolute top-2 right-2">
                 <span className="bg-blue-600 text-white text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-wider">Recommended</span>
               </div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-2">Private Sale</p>
-              <p className="text-2xl font-black text-slate-900">{formatZAR(privateSale)}</p>
-              <p className="text-xs font-semibold text-slate-600 mt-2">Selling it yourself. Takes longer but gets you a better return.</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-2">Private Sale</p>
+              <p className="text-2xl font-black text-white">{formatZAR(privateSale)}</p>
+              <p className="text-xs font-semibold text-slate-300 mt-2">Selling it yourself. Takes longer but gets you a better return.</p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm relative overflow-hidden">
+            <div className="p-5 rounded-2xl bg-slate-900/60 border border-white/10 shadow-xl shadow-black/20 relative overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-emerald-400"></div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Dealer Retail Price</p>
-              <p className="text-2xl font-black text-slate-900">{formatZAR(retailValue)}</p>
-              <p className="text-xs font-semibold text-slate-500 mt-2">What a dealership would sell this car for on their showroom floor.</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2">Dealer Retail Price</p>
+              <p className="text-2xl font-black text-white">{formatZAR(retailValue)}</p>
+              <p className="text-xs font-semibold text-slate-400 mt-2">What a dealership would sell this car for on their showroom floor.</p>
             </div>
           </div>
         </div>
 
         {/* Depreciation Breakdown */}
         {valuation.depreciation_factors && valuation.depreciation_factors.length > 0 && (
-          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-            <h4 className="font-black text-lg text-slate-900 mb-1">Why did it lose value?</h4>
-            <p className="text-xs font-semibold text-slate-500 mb-6">Breakdown of the {formatZAR(valueLost)} depreciation</p>
+          <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/10 shadow-xl shadow-black/20">
+            <h4 className="font-black text-lg text-white mb-1">Why did it lose value?</h4>
+            <p className="text-xs font-semibold text-slate-400 mb-6">Breakdown of the {formatZAR(valueLost)} depreciation</p>
             
             <div className="space-y-4">
               {valuation.depreciation_factors.map((f, i) => (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-4 rounded-xl bg-slate-800/50 border border-white/5">
                   <div className="flex-1">
-                    <p className="font-bold text-sm text-slate-900">{f.reason}</p>
-                    <p className="text-xs font-semibold text-slate-500 mt-1">{f.explanation}</p>
+                    <p className="font-bold text-sm text-white">{f.reason}</p>
+                    <p className="text-xs font-semibold text-slate-400 mt-1">{f.explanation}</p>
                   </div>
                   <div className="text-left sm:text-right">
-                    <span className="text-sm font-black text-red-500 bg-red-50 px-3 py-1 rounded-lg border border-red-100">
+                    <span className="text-sm font-black text-red-500 bg-red-500/10 px-3 py-1 rounded-lg border border-red-500/10">
                       -{formatZAR(f.amount_lost_zar)}
                     </span>
                   </div>
@@ -640,24 +640,24 @@ export default function CarValuator() {
 
         {/* Value factors (Condition adjustments) */}
         {valuation.value_factors && valuation.value_factors.length > 0 && (
-          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-4">Specific Condition Adjustments</p>
+          <div className="p-6 rounded-2xl bg-slate-900/60 border border-white/10 shadow-xl shadow-black/20">
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Specific Condition Adjustments</p>
             <div className="space-y-3">
               {valuation.value_factors.map((f, i) => (
-                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-slate-800/50 border border-white/5">
                   <div className={`mt-0.5 h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                    f.impact === 'positive' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-500'
+                    f.impact === 'positive' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-red-500/20 text-red-500'
                   }`}>
                     {f.impact === 'positive' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="font-black text-sm text-slate-900">{f.factor}</p>
-                      <span className={`text-xs font-black ${f.impact === 'positive' ? 'text-emerald-600' : 'text-red-500'}`}>
+                      <p className="font-black text-sm text-white">{f.factor}</p>
+                      <span className={`text-xs font-black ${f.impact === 'positive' ? 'text-emerald-400' : 'text-red-500'}`}>
                         {f.impact === 'positive' ? '+' : '-'}{formatZAR(f.amount_zar)}
                       </span>
                     </div>
-                    <p className="text-xs font-semibold text-slate-500 mt-0.5">{f.explanation}</p>
+                    <p className="text-xs font-semibold text-slate-400 mt-0.5">{f.explanation}</p>
                   </div>
                 </div>
               ))}
@@ -668,12 +668,12 @@ export default function CarValuator() {
         <div className="grid sm:grid-cols-2 gap-4">
           {/* Photo observations */}
           {valuation.photo_observations && (
-            <div className="p-6 rounded-2xl bg-violet-50 border border-violet-100">
+            <div className="p-6 rounded-2xl bg-violet-500/10 border border-violet-500/10">
               <div className="flex items-center gap-2 mb-3">
-                <Camera className="w-4 h-4 text-violet-600" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-violet-600">Photo Analysis</p>
+                <Camera className="w-4 h-4 text-violet-400" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-violet-400">Photo Analysis</p>
               </div>
-              <p className="text-sm font-semibold text-slate-700 leading-relaxed">{valuation.photo_observations}</p>
+              <p className="text-sm font-semibold text-slate-300 leading-relaxed">{valuation.photo_observations}</p>
             </div>
           )}
 
@@ -684,23 +684,23 @@ export default function CarValuator() {
                 <FileText className="w-4 h-4 text-sky-600" />
                 <p className="text-[10px] font-black uppercase tracking-widest text-sky-600">Market Insight</p>
               </div>
-              <p className="text-sm font-semibold text-slate-700 leading-relaxed">{valuation.market_comparison}</p>
+              <p className="text-sm font-semibold text-slate-300 leading-relaxed">{valuation.market_comparison}</p>
             </div>
           )}
         </div>
 
         {/* Recommendations */}
         {valuation.recommendations && valuation.recommendations.length > 0 && (
-          <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-100">
+          <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/10">
             <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-emerald-600" />
-              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Tips to Maximize Value</p>
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Tips to Maximize Value</p>
             </div>
             <div className="space-y-2">
               {valuation.recommendations.map((r, i) => (
                 <div key={i} className="flex items-start gap-2">
                   <span className="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
-                  <p className="text-sm font-semibold text-slate-700">{r}</p>
+                  <p className="text-sm font-semibold text-slate-300">{r}</p>
                 </div>
               ))}
             </div>
@@ -711,7 +711,7 @@ export default function CarValuator() {
         <button
           type="button"
           onClick={resetAll}
-          className="w-full py-4 rounded-2xl border-2 border-slate-200 bg-white text-slate-900 font-black hover:bg-slate-50 transition-all mt-8"
+          className="w-full py-4 rounded-2xl border-2 border-white/10 bg-slate-900/60 text-white font-black hover:bg-slate-800/50 transition-all mt-8"
         >
           Value Another Vehicle
         </button>
@@ -720,7 +720,7 @@ export default function CarValuator() {
   }
 
   return (
-    <UserLayout title="Car Value Estimator">
+    <AppLayout title="Car Value Estimator">
       <div className="max-w-2xl mx-auto">
         {/* Header badge */}
         <div className="flex items-center justify-center gap-3 mb-6">
@@ -728,15 +728,15 @@ export default function CarValuator() {
             <DollarSign className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-blue-600">AI-Powered</p>
-            <h2 className="text-lg font-black text-slate-900 tracking-tight leading-none">Vehicle Valuation</h2>
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-blue-400">AI-Powered</p>
+            <h2 className="text-lg font-black text-white tracking-tight leading-none">Vehicle Valuation</h2>
           </div>
         </div>
 
         {renderStepIndicator()}
 
         {/* Card */}
-        <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm p-8">
+        <div className="bg-slate-900/60 rounded-[2.5rem] border border-white/10 shadow-xl shadow-black/20 p-8">
           {step === 0 && renderStep0()}
           {step === 1 && renderStep1()}
           {step === 2 && renderStep2()}
@@ -744,12 +744,12 @@ export default function CarValuator() {
 
           {/* Navigation */}
           {step < 3 && (
-            <div className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} mt-8 pt-6 border-t border-slate-100`}>
+            <div className={`flex ${step === 0 ? 'justify-end' : 'justify-between'} mt-8 pt-6 border-t border-white/5`}>
               {step > 0 && (
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-50 transition-all"
+                  className="flex items-center gap-2 px-6 py-3.5 rounded-xl border border-white/10 text-slate-300 font-bold text-sm hover:bg-slate-800/50 transition-all"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Back
@@ -792,6 +792,6 @@ export default function CarValuator() {
           Actual selling price may vary based on market conditions, negotiation, and vehicle inspection.
         </p>
       </div>
-    </UserLayout>
+    </AppLayout>
   )
 }

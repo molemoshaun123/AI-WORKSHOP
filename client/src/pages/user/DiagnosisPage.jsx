@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import UserLayout from '../../layouts/UserLayout'
+import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
 
 function parseMaybeJson(value) {
@@ -105,13 +105,13 @@ export default function DiagnosisPage() {
   }
 
   return (
-    <UserLayout title="Vehicle Assistant">
+    <AppLayout title="Vehicle Assistant">
       <div className="grid lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4 rounded-[2.5rem] border border-slate-200 bg-white p-7 shadow-sm">
+        <div className="lg:col-span-4 rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-7 shadow-xl shadow-black/20">
           <div className="mb-6">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Vehicle context</p>
-            <h3 className="mt-2 text-xl font-black text-slate-900">Optional Details</h3>
-            <p className="mt-2 text-sm leading-7 text-slate-600">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Vehicle context</p>
+            <h3 className="mt-2 text-xl font-black text-white">Optional Details</h3>
+            <p className="mt-2 text-sm leading-7 text-slate-300">
               Adding vehicle details improves the quality of the assistant response.
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function DiagnosisPage() {
               <select 
                 value={selectedVehicleId} 
                 onChange={handleVehicleSelect}
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all mb-4"
+                className="w-full rounded-2xl border border-white/10 bg-slate-800/50 px-5 py-3 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all mb-4"
               >
                 <option value="">-- Select Saved Vehicle --</option>
                 {savedVehicles.map(v => (
@@ -132,42 +132,42 @@ export default function DiagnosisPage() {
               </select>
             )}
 
-            <input value={vehicle.make} onChange={(e) => setVehicle((p) => ({ ...p, make: e.target.value }))} placeholder="Make" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
-            <input value={vehicle.model} onChange={(e) => setVehicle((p) => ({ ...p, model: e.target.value }))} placeholder="Model" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
-            <input value={vehicle.year} onChange={(e) => setVehicle((p) => ({ ...p, year: e.target.value }))} placeholder="Year" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
-            <input value={vehicle.mileage} onChange={(e) => setVehicle((p) => ({ ...p, mileage: e.target.value }))} placeholder="Mileage" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+            <input value={vehicle.make} onChange={(e) => setVehicle((p) => ({ ...p, make: e.target.value }))} placeholder="Make" className="w-full rounded-2xl border border-white/10 bg-slate-800/50 px-5 py-3 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+            <input value={vehicle.model} onChange={(e) => setVehicle((p) => ({ ...p, model: e.target.value }))} placeholder="Model" className="w-full rounded-2xl border border-white/10 bg-slate-800/50 px-5 py-3 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+            <input value={vehicle.year} onChange={(e) => setVehicle((p) => ({ ...p, year: e.target.value }))} placeholder="Year" className="w-full rounded-2xl border border-white/10 bg-slate-800/50 px-5 py-3 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
+            <input value={vehicle.mileage} onChange={(e) => setVehicle((p) => ({ ...p, mileage: e.target.value }))} placeholder="Mileage" className="w-full rounded-2xl border border-white/10 bg-slate-800/50 px-5 py-3 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all" />
           </div>
 
-          <div className="mt-6 rounded-[1.75rem] border border-blue-200 bg-blue-50 p-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">Tip</p>
-            <p className="mt-2 text-sm font-semibold leading-7 text-slate-700">
+          <div className="mt-6 rounded-[1.75rem] border border-blue-500/20 bg-blue-500/10 p-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-400">Tip</p>
+            <p className="mt-2 text-sm font-semibold leading-7 text-slate-300">
               Include what changed recently, when the problem happens, and whether the vehicle still feels safe to drive.
             </p>
           </div>
         </div>
 
-        <div className="lg:col-span-8 flex flex-col rounded-[2.5rem] border border-slate-200 bg-white p-7 shadow-sm h-[800px]">
+        <div className="lg:col-span-8 flex flex-col rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-7 shadow-xl shadow-black/20 h-[800px]">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Conversation</p>
-              <h3 className="mt-2 text-xl font-black text-slate-900">Ask the Vehicle Assistant</h3>
+              <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Conversation</p>
+              <h3 className="mt-2 text-xl font-black text-white">Ask the Vehicle Assistant</h3>
             </div>
-            <div className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-blue-700">
+            <div className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-blue-400">
               Car only
             </div>
           </div>
 
-          <div className="flex-1 space-y-4 overflow-auto rounded-[2rem] border border-slate-200 bg-slate-50 p-5">
+          <div className="flex-1 space-y-4 overflow-auto rounded-[2rem] border border-white/10 bg-slate-800/50 p-5">
             {messages.map((m, idx) => (
               <div key={`${idx}-${m.role}`} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
-                  className={`max-w-[85%] rounded-[1.5rem] border px-4 py-3 shadow-sm ${
+                  className={`max-w-[85%] rounded-[1.5rem] border px-4 py-3 shadow-xl shadow-black/20 ${
                     m.role === 'user'
                       ? 'border-blue-600 bg-blue-600 text-white rounded-tr-none'
-                      : 'border-slate-200 bg-white text-slate-700 rounded-tl-none'
+                      : 'border-white/10 bg-slate-900/60 text-slate-300 rounded-tl-none'
                   }`}
                 >
-                  <p className={`whitespace-pre-wrap text-sm font-semibold leading-7 ${m.role === 'user' ? 'text-white' : 'text-slate-700'}`}>{m.content}</p>
+                  <p className={`whitespace-pre-wrap text-sm font-semibold leading-7 ${m.role === 'user' ? 'text-white' : 'text-slate-300'}`}>{m.content}</p>
 
                   {m.role === 'assistant' && Array.isArray(m.followUps) && m.followUps.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -176,7 +176,7 @@ export default function DiagnosisPage() {
                           key={q}
                           type="button"
                           onClick={() => send(q)}
-                          className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-[12px] font-black text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                          className="rounded-2xl border border-white/10 bg-slate-800/50 px-3 py-2 text-[12px] font-black text-slate-300 transition hover:bg-slate-800/80 hover:text-white"
                         >
                           {q}
                         </button>
@@ -200,18 +200,18 @@ export default function DiagnosisPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="h-14 flex-1 resize-none rounded-[2rem] border border-slate-200 bg-slate-50 px-5 py-4 text-sm font-bold text-slate-900 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+              className="h-14 flex-1 resize-none rounded-[2rem] border border-white/10 bg-slate-800/50 px-5 py-4 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="rounded-[2.5rem] bg-blue-600 px-6 font-black text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-60"
+              className="rounded-[2.5rem] bg-blue-600 px-6 font-black text-white shadow-xl shadow-black/20 transition hover:bg-blue-700 disabled:opacity-60"
             >
               {loading ? 'Sending...' : 'Send'}
             </button>
           </form>
         </div>
       </div>
-    </UserLayout>
+    </AppLayout>
   )
 }

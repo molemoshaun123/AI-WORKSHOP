@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Printer, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import api from '../../services/api'
-import UserLayout from '../../layouts/UserLayout'
+import AppLayout from '../../layouts/AppLayout'
 import toast from 'react-hot-toast'
 
 export default function InvoicePage() {
@@ -59,11 +59,11 @@ export default function InvoicePage() {
 
   if (loading) {
     return (
-      <UserLayout title="Invoice">
+      <AppLayout title="Invoice">
         <div className="flex items-center justify-center p-20">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
         </div>
-      </UserLayout>
+      </AppLayout>
     )
   }
 
@@ -73,12 +73,12 @@ export default function InvoicePage() {
   const latestQuote = finances.quotes?.[0]
 
   return (
-    <UserLayout title={`Invoice #${job.job_id}`}>
+    <AppLayout title={`Invoice #${job.job_id}`}>
       {/* Non-printable header actions */}
       <div className="mb-8 flex items-center justify-between print:hidden">
         <button
           onClick={() => navigate('/user/dashboard')}
-          className="inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
+          className="inline-flex items-center gap-2 rounded-2xl bg-slate-900/60 px-5 py-3 text-sm font-black text-slate-300 shadow-xl shadow-black/20 transition hover:bg-slate-800/50"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
@@ -94,33 +94,33 @@ export default function InvoicePage() {
       </div>
 
       {/* Printable Invoice Container */}
-      <div className="mx-auto max-w-4xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-xl print:m-0 print:max-w-full print:rounded-none print:border-none print:shadow-none">
+      <div className="mx-auto max-w-4xl overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900/60 shadow-xl print:m-0 print:max-w-full print:rounded-none print:border-none print:shadow-none">
         
         {/* Header */}
-        <div className="border-b border-slate-200 bg-slate-50 p-8 sm:p-12 print:bg-transparent">
+        <div className="border-b border-white/10 bg-slate-800/50 p-8 sm:p-12 print:bg-transparent">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20">
                   <span className="text-xl font-black">AI</span>
                 </div>
-                <h1 className="text-3xl font-black tracking-tight text-slate-900">Workshop</h1>
+                <h1 className="text-3xl font-black tracking-tight text-white">Workshop</h1>
               </div>
-              <p className="text-sm font-semibold text-slate-500">123 Mechanics Way<br/>Tech District, NY 10001</p>
+              <p className="text-sm font-semibold text-slate-400">123 Mechanics Way<br/>Tech District, NY 10001</p>
             </div>
             
             <div className="sm:text-right">
-              <h2 className="text-4xl font-black text-slate-900 uppercase tracking-tight">Invoice</h2>
-              <p className="mt-2 text-sm font-bold text-slate-500 uppercase tracking-widest">Job #{job.job_id}</p>
-              <p className="mt-1 text-sm font-semibold text-slate-600">Date: {new Date().toLocaleDateString()}</p>
+              <h2 className="text-4xl font-black text-white uppercase tracking-tight">Invoice</h2>
+              <p className="mt-2 text-sm font-bold text-slate-400 uppercase tracking-widest">Job #{job.job_id}</p>
+              <p className="mt-1 text-sm font-semibold text-slate-300">Date: {new Date().toLocaleDateString()}</p>
               
               {latestInvoice ? (
-                <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-black uppercase tracking-widest text-emerald-700">
+                <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-black uppercase tracking-widest text-emerald-400">
                   <CheckCircle2 className="h-3 w-3" />
                   Final Invoice {latestInvoice.status === 'paid' ? '(PAID)' : '(UNPAID)'}
                 </div>
               ) : latestQuote ? (
-                <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs font-black uppercase tracking-widest text-blue-700">
+                <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-blue-500/20 px-3 py-1 text-xs font-black uppercase tracking-widest text-blue-400">
                   <AlertCircle className="h-3 w-3" />
                   Estimated Quote
                 </div>
@@ -133,27 +133,27 @@ export default function InvoicePage() {
           {/* Customer & Vehicle Info */}
           <div className="grid gap-8 sm:grid-cols-2">
             <div>
-              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-100 pb-2">Customer Details</h3>
-              <p className="text-lg font-bold text-slate-900">{user.full_name}</p>
-              <p className="mt-1 text-sm text-slate-600">{user.email}</p>
-              <p className="mt-1 text-sm text-slate-600">{user.phone || 'No phone provided'}</p>
+              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-b border-white/5 pb-2">Customer Details</h3>
+              <p className="text-lg font-bold text-white">{user.full_name}</p>
+              <p className="mt-1 text-sm text-slate-300">{user.email}</p>
+              <p className="mt-1 text-sm text-slate-300">{user.phone || 'No phone provided'}</p>
             </div>
 
             <div>
-              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-b border-slate-100 pb-2">Vehicle Details</h3>
-              <p className="text-lg font-bold text-slate-900">{job.make} {job.model}</p>
-              <p className="mt-1 text-sm text-slate-600">Reg: <span className="font-semibold text-slate-900">{job.registration_number || 'N/A'}</span></p>
-              <p className="mt-1 text-sm text-slate-600">Job Status: <span className="font-bold text-blue-600 uppercase tracking-wider text-xs">{job.status}</span></p>
-              <p className="mt-1 text-sm text-slate-600 italic">"{job.title}"</p>
+              <h3 className="mb-4 text-xs font-black uppercase tracking-[0.2em] text-slate-400 border-b border-white/5 pb-2">Vehicle Details</h3>
+              <p className="text-lg font-bold text-white">{job.make} {job.model}</p>
+              <p className="mt-1 text-sm text-slate-300">Reg: <span className="font-semibold text-white">{job.registration_number || 'N/A'}</span></p>
+              <p className="mt-1 text-sm text-slate-300">Job Status: <span className="font-bold text-blue-400 uppercase tracking-wider text-xs">{job.status}</span></p>
+              <p className="mt-1 text-sm text-slate-300 italic">"{job.title}"</p>
             </div>
           </div>
 
           {/* Pricing Table */}
           <div>
             <h3 className="mb-4 text-xs font-black uppercase tracking-[0.2em] text-slate-400">Financial Summary</h3>
-            <div className="overflow-hidden rounded-2xl border border-slate-200">
+            <div className="overflow-hidden rounded-2xl border border-white/10">
               <table className="w-full text-left text-sm">
-                <thead className="bg-slate-50 text-xs uppercase tracking-widest text-slate-500">
+                <thead className="bg-slate-800/50 text-xs uppercase tracking-widest text-slate-400">
                   <tr>
                     <th className="px-6 py-4 font-black">Description</th>
                     <th className="px-6 py-4 font-black text-right">Amount</th>
@@ -163,10 +163,10 @@ export default function InvoicePage() {
                   {latestQuote && (
                     <tr>
                       <td className="px-6 py-4">
-                        <span className="font-bold text-slate-900">Initial Quote</span>
-                        <p className="text-xs text-slate-500 mt-1">Status: {latestQuote.status}</p>
+                        <span className="font-bold text-white">Initial Quote</span>
+                        <p className="text-xs text-slate-400 mt-1">Status: {latestQuote.status}</p>
                       </td>
-                      <td className="px-6 py-4 text-right font-semibold text-slate-600">
+                      <td className="px-6 py-4 text-right font-semibold text-slate-300">
                         R{Number(latestQuote.amount).toFixed(2)}
                       </td>
                     </tr>
@@ -174,17 +174,17 @@ export default function InvoicePage() {
                   {latestInvoice && (
                     <tr>
                       <td className="px-6 py-4">
-                        <span className="font-bold text-slate-900">Final Invoice</span>
-                        <p className="text-xs text-slate-500 mt-1">Status: {latestInvoice.status}</p>
+                        <span className="font-bold text-white">Final Invoice</span>
+                        <p className="text-xs text-slate-400 mt-1">Status: {latestInvoice.status}</p>
                       </td>
-                      <td className="px-6 py-4 text-right font-black text-slate-900 text-lg">
+                      <td className="px-6 py-4 text-right font-black text-white text-lg">
                         R{Number(latestInvoice.amount).toFixed(2)}
                       </td>
                     </tr>
                   )}
                   {!latestQuote && !latestInvoice && (
                     <tr>
-                      <td colSpan="2" className="px-6 py-8 text-center text-slate-500 italic">
+                      <td colSpan="2" className="px-6 py-8 text-center text-slate-400 italic">
                         No financial records found for this job yet.
                       </td>
                     </tr>
@@ -197,22 +197,22 @@ export default function InvoicePage() {
           {/* Job History / Timeline */}
           <div>
             <h3 className="mb-6 text-xs font-black uppercase tracking-[0.2em] text-slate-400">Service Timeline History</h3>
-            <div className="relative border-l-2 border-slate-100 pl-6 ml-3 space-y-8">
+            <div className="relative border-l-2 border-white/5 pl-6 ml-3 space-y-8">
               {history.length === 0 ? (
-                <p className="text-sm text-slate-500 italic">No timeline events recorded.</p>
+                <p className="text-sm text-slate-400 italic">No timeline events recorded.</p>
               ) : (
                 history.map((event, index) => (
                   <div key={event.history_id} className="relative">
                     {/* Timeline dot */}
-                    <div className="absolute -left-[31px] top-1 h-4 w-4 rounded-full border-4 border-white bg-blue-500 shadow-sm" />
+                    <div className="absolute -left-[31px] top-1 h-4 w-4 rounded-full border-4 border-white bg-blue-500 shadow-xl shadow-black/20" />
                     
                     <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mb-1">
-                      <h4 className="text-sm font-black uppercase tracking-widest text-slate-900">{event.status.replace('_', ' ')}</h4>
+                      <h4 className="text-sm font-black uppercase tracking-widest text-white">{event.status.replace('_', ' ')}</h4>
                       <span className="text-xs font-semibold text-slate-400">{new Date(event.changed_at).toLocaleString()}</span>
                     </div>
                     
                     {event.notes && (
-                      <p className="text-sm text-slate-600 mt-2 bg-slate-50 p-4 rounded-xl border border-slate-100 whitespace-pre-wrap">
+                      <p className="text-sm text-slate-300 mt-2 bg-slate-800/50 p-4 rounded-xl border border-white/5 whitespace-pre-wrap">
                         {event.notes}
                       </p>
                     )}
@@ -224,6 +224,6 @@ export default function InvoicePage() {
 
         </div>
       </div>
-    </UserLayout>
+    </AppLayout>
   )
 }
