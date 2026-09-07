@@ -1,5 +1,7 @@
 const pool = require('../config/db')
 
+const { generateCompatibleCars } = require('../services/geminiService')
+
 const listParts = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM public.parts ORDER BY created_at DESC')
@@ -12,11 +14,17 @@ const listParts = async (req, res) => {
 const createPart = async (req, res) => {
   try {
     const { name, sku, quantity, unit_price, reorder_level, compatible_cars } = req.body
+    
+    let generatedCompatibleCars = compatible_cars
+    if (!generatedCompatibleCars || generatedCompatibleCars.trim() === '') {
+      generatedCompatibleCars = await generateCompatibleCars(name, sku || '')
+    }
+
     const result = await pool.query(
       `INSERT INTO public.parts (name, sku, quantity, unit_price, reorder_level, compatible_cars)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [name, sku || null, Number(quantity || 0), unit_price ?? null, Number(reorder_level || 0), compatible_cars || null]
+      [name, sku || null, Number(quantity || 0), unit_price ?? null, Number(reorder_level || 0), generatedCompatibleCars || null]
     )
     res.status(201).json(result.rows[0])
   } catch (error) {
@@ -129,6 +137,13 @@ async function updatePart(req, res) {
     const { part_id } = req.params
     const { name, sku, quantity, unit_price, reorder_level, compatible_cars } = req.body
 
+    let generatedCompatibleCars = compatible_cars
+    if (generatedCompatibleCars === '') {
+      // If the user explicitly cleared the field, we re-generate it or leave it?
+      // Since the requirement is "generate compatible cars if not provided", let's generate it.
+      generatedCompatibleCars = await generateCompatibleCars(name || '', sku || '')
+    }
+
     const result = await pool.query(
       `UPDATE public.parts
        SET name = COALESCE($1, name),
@@ -139,7 +154,7 @@ async function updatePart(req, res) {
            compatible_cars = COALESCE($6, compatible_cars)
        WHERE part_id = $7
        RETURNING *`,
-      [name || null, sku || null, quantity != null ? Number(quantity) : null, unit_price != null ? Number(unit_price) : null, reorder_level != null ? Number(reorder_level) : null, compatible_cars || null, part_id]
+      [name || null, sku || null, quantity != null ? Number(quantity) : null, unit_price != null ? Number(unit_price) : null, reorder_level != null ? Number(reorder_level) : null, generatedCompatibleCars || null, part_id]
     )
 
     if (result.rows.length === 0) {

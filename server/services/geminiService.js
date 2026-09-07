@@ -732,6 +732,24 @@ photo_observations (string or null — what was observed from photos, null if no
   }
 }
 
+async function generateCompatibleCars(part_name, sku = '') {
+  const prompt = `
+You are an automotive parts expert.
+Provide a concise, comma-separated list of common vehicle makes and models that are compatible with the following part. Do not include introductory text, explanations, or formatting. Keep it to a single line.
+
+Part Name: ${part_name}
+SKU: ${sku}
+`
+  try {
+    const result = await generateWithFallback(prompt)
+    // Strip possible markdown code blocks if the model insists
+    let clean = result.replace(/```(json)?|```/g, '').trim()
+    return clean || 'Universal Fit'
+  } catch (e) {
+    return 'Universal Fit'
+  }
+}
+
 module.exports = {
   diagnoseSymptoms,
   estimateRepairTime,
@@ -747,6 +765,7 @@ module.exports = {
   analyzeAudio,
   forecastStock,
   estimateCarValue,
+  generateCompatibleCars,
 }
 
 function fallbackFaultDiagnosis(symptoms, vehicleDetails = {}) {
