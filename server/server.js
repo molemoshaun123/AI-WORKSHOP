@@ -56,6 +56,10 @@ app.use('/api/inventory', verifyToken, verifyAdmin, inventoryRoutes)
 app.use('/api/inventory', verifyToken, verifyAdmin, supplierRoutes)
 app.use('/api/finance', verifyToken, financeRoutes)
 
+// User-accessible parts catalog (read-only, no admin required)
+const catalogController = require('./controllers/inventoryController')
+app.get('/api/parts/catalog', verifyToken, catalogController.listParts)
+
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

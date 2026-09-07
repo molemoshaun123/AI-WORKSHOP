@@ -13,7 +13,7 @@ export default function PartsCompatibility() {
   useEffect(() => {
     const fetchParts = async () => {
       try {
-        const res = await api.get('/inventory/parts')
+        const res = await api.get('/parts/catalog')
         setParts(Array.isArray(res.data) ? res.data : [])
       } catch (err) {
         console.error('Failed to load parts')
