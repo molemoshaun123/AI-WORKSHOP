@@ -38,6 +38,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const ImageUpload = lazy(() => import('./pages/user/ImageUpload'))
 const UserProfile = lazy(() => import('./pages/user/UserProfile'))
 const ServiceHistory = lazy(() => import('./pages/user/ServiceHistory'))
+const UserPartsCompatibility = lazy(() => import('./pages/user/PartsCompatibility'))
 
 function RequireUser({ children }) {
   const { isUser, isAdmin } = useAuth()
@@ -141,6 +142,14 @@ export default function App() {
           element={
             <RequireUser>
               <InvoicePage />
+            </RequireUser>
+          }
+        />
+        <Route
+          path="/user/parts-compatibility"
+          element={
+            <RequireUser>
+              <UserPartsCompatibility />
             </RequireUser>
           }
         />

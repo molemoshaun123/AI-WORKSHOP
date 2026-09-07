@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, Settings, CheckCircle2, Car, Timer, MessageCircle, Receipt, XCircle } from 'lucide-react'
+import { Clock, Settings, CheckCircle2, Car, Timer, MessageCircle, Receipt, XCircle, PackageSearch } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
@@ -372,6 +372,14 @@ export default function UserDashboard() {
                     <MessageCircle className="w-8 h-8 text-indigo-500" />
                     <p className="mt-3 text-base font-black text-white">Messages</p>
                     <p className="mt-1 text-xs text-indigo-400">Talk to workshop</p>
+                  </Link>
+                  <Link
+                    to="/user/parts-compatibility"
+                    className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-white/10"
+                  >
+                    <PackageSearch className="w-8 h-8 text-fuchsia-500" />
+                    <p className="mt-3 text-base font-black text-white">Parts Finder</p>
+                    <p className="mt-1 text-xs text-slate-400">Find compatible parts</p>
                   </Link>
                 </div>
               </div>

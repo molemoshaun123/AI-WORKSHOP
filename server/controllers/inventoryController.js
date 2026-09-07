@@ -11,12 +11,12 @@ const listParts = async (req, res) => {
 
 const createPart = async (req, res) => {
   try {
-    const { name, sku, quantity, unit_price, reorder_level } = req.body
+    const { name, sku, quantity, unit_price, reorder_level, compatible_cars } = req.body
     const result = await pool.query(
-      `INSERT INTO public.parts (name, sku, quantity, unit_price, reorder_level)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO public.parts (name, sku, quantity, unit_price, reorder_level, compatible_cars)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [name, sku || null, Number(quantity || 0), unit_price ?? null, Number(reorder_level || 0)]
+      [name, sku || null, Number(quantity || 0), unit_price ?? null, Number(reorder_level || 0), compatible_cars || null]
     )
     res.status(201).json(result.rows[0])
   } catch (error) {
@@ -93,7 +93,7 @@ const updateOrderStatus = async (req, res) => {
 const getReorderSuggestions = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT p.part_id, p.name, p.sku, p.quantity, p.reorder_level, p.unit_price,
+      `SELECT p.part_id, p.name, p.sku, p.quantity, p.reorder_level, p.unit_price, p.compatible_cars,
               GREATEST((COALESCE(p.reorder_level, 0) * 2) - p.quantity, 1) AS suggested_order_qty,
               COALESCE((
                 SELECT SUM(o.quantity)
@@ -127,7 +127,7 @@ module.exports = {
 async function updatePart(req, res) {
   try {
     const { part_id } = req.params
-    const { name, sku, quantity, unit_price, reorder_level } = req.body
+    const { name, sku, quantity, unit_price, reorder_level, compatible_cars } = req.body
 
     const result = await pool.query(
       `UPDATE public.parts
@@ -135,10 +135,11 @@ async function updatePart(req, res) {
            sku = COALESCE($2, sku),
            quantity = COALESCE($3, quantity),
            unit_price = COALESCE($4, unit_price),
-           reorder_level = COALESCE($5, reorder_level)
-       WHERE part_id = $6
+           reorder_level = COALESCE($5, reorder_level),
+           compatible_cars = COALESCE($6, compatible_cars)
+       WHERE part_id = $7
        RETURNING *`,
-      [name || null, sku || null, quantity != null ? Number(quantity) : null, unit_price != null ? Number(unit_price) : null, reorder_level != null ? Number(reorder_level) : null, part_id]
+      [name || null, sku || null, quantity != null ? Number(quantity) : null, unit_price != null ? Number(unit_price) : null, reorder_level != null ? Number(reorder_level) : null, compatible_cars || null, part_id]
     )
 
     if (result.rows.length === 0) {

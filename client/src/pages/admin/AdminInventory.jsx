@@ -14,7 +14,7 @@ export default function AdminInventory() {
   const [reorderSuggestions, setReorderSuggestions] = useState([])
   const [suppliers, setSuppliers] = useState([])
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ name: '', sku: '', quantity: 0, unit_price: '', reorder_level: 0 })
+  const [form, setForm] = useState({ name: '', sku: '', quantity: 0, unit_price: '', reorder_level: 0, compatible_cars: '' })
   const [orderForm, setOrderForm] = useState({ part_id: '', quantity: 1, job_id: '', supplier_id: '' })
   const [supplierPrices, setSupplierPrices] = useState([])
   const [loadingPrices, setLoadingPrices] = useState(false)
@@ -111,8 +111,9 @@ export default function AdminInventory() {
         quantity: Number(form.quantity || 0),
         unit_price: form.unit_price ? Number(form.unit_price) : null,
         reorder_level: Number(form.reorder_level || 0),
+        compatible_cars: form.compatible_cars || null,
       })
-      setForm({ name: '', sku: '', quantity: 0, unit_price: '', reorder_level: 0 })
+      setForm({ name: '', sku: '', quantity: 0, unit_price: '', reorder_level: 0, compatible_cars: '' })
       toast.success('Part added successfully')
       load()
     } catch (err) {
@@ -130,6 +131,7 @@ export default function AdminInventory() {
         quantity: Number(editingPart.quantity || 0),
         unit_price: editingPart.unit_price ? Number(editingPart.unit_price) : null,
         reorder_level: Number(editingPart.reorder_level || 0),
+        compatible_cars: editingPart.compatible_cars || null,
       })
       setIsEditPanelOpen(false)
       setEditingPart(null)
@@ -553,6 +555,12 @@ export default function AdminInventory() {
                 placeholder="Unit price (optional)"
                 className="w-full bg-slate-950/40 border border-white/10 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500"
               />
+              <textarea
+                value={form.compatible_cars}
+                onChange={(e) => setForm((prev) => ({ ...prev, compatible_cars: e.target.value }))}
+                placeholder="Compatible vehicles (e.g. Toyota Corolla 2010+, VW Golf Mk6)"
+                className="w-full bg-slate-950/40 border border-white/10 rounded-2xl px-5 py-4 text-sm font-bold outline-none focus:ring-2 focus:ring-emerald-500 min-h-[100px]"
+              />
               <button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl transition-all">
                 Add Part
               </button>
@@ -684,6 +692,15 @@ export default function AdminInventory() {
                 value={editingPart.unit_price || ''}
                 onChange={(e) => setEditingPart((prev) => ({ ...prev, unit_price: e.target.value }))}
                 className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-cyan-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Compatible Vehicles</label>
+              <textarea
+                value={editingPart.compatible_cars || ''}
+                onChange={(e) => setEditingPart((prev) => ({ ...prev, compatible_cars: e.target.value }))}
+                placeholder="e.g. Toyota Corolla 2010+, VW Golf Mk6"
+                className="w-full bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-cyan-500 min-h-[100px]"
               />
             </div>
             <div className="pt-4 mt-6 border-t border-white/10">

@@ -102,8 +102,13 @@ pool
           quantity integer NOT NULL DEFAULT 0,
           unit_price numeric(10, 2),
           reorder_level integer DEFAULT 0,
+          compatible_cars TEXT,
           created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
       )`
+    )
+    await pool.query(
+      `ALTER TABLE IF EXISTS public.parts
+       ADD COLUMN IF NOT EXISTS compatible_cars TEXT`
     )
     await pool.query(
       `CREATE TABLE IF NOT EXISTS public.part_orders
@@ -212,6 +217,93 @@ pool
         }
       }
       console.log('Seeded supplier part pricing')
+    }
+
+    // ── Seed 50 auto parts if empty ──
+    const partsCountRes = await pool.query('SELECT COUNT(*) FROM public.parts')
+    if (Number(partsCountRes.rows[0].count) === 0) {
+      const partsData = [
+        { name: 'NGK Spark Plug', sku: 'NGK-1234', price: 45.00, cars: 'Toyota Corolla 2010-2022, Honda Civic 2012-2021' },
+        { name: 'Bosch Spark Plug', sku: 'BOSCH-SP1', price: 55.00, cars: 'VW Golf 2013-2023, Audi A3 2014-2023' },
+        { name: 'Denso Ignition Coil', sku: 'DEN-IC01', price: 450.00, cars: 'Toyota Yaris 2008-2020, Toyota Etios' },
+        { name: 'Delphi Ignition Coil', sku: 'DEL-IC02', price: 420.00, cars: 'Ford Ranger 2012-2022, Mazda BT-50' },
+        { name: 'Castrol GTX 20W-50 5L', sku: 'OIL-CAS-01', price: 280.00, cars: 'Universal (Older vehicles)' },
+        { name: 'Shell Helix HX7 10W-40 5L', sku: 'OIL-SHL-01', price: 350.00, cars: 'Universal (Semi-synthetic)' },
+        { name: 'Total Quartz 9000 5W-40 5L', sku: 'OIL-TOT-01', price: 550.00, cars: 'Universal (Fully synthetic)' },
+        { name: 'GUD Oil Filter', sku: 'GUD-Z158', price: 85.00, cars: 'VW Polo 1.4/1.6, VW Golf Mk1/Mk2' },
+        { name: 'GUD Oil Filter', sku: 'GUD-Z93', price: 90.00, cars: 'Toyota Hilux 2.0/2.2/2.4/2.8, Fortuner' },
+        { name: 'Fram Air Filter', sku: 'FRA-CA101', price: 120.00, cars: 'Ford Fiesta 1.4/1.6 2008-2018' },
+        { name: 'GUD Air Filter', sku: 'GUD-AG123', price: 150.00, cars: 'Nissan NP200 1.6' },
+        { name: 'Ferodo Brake Pads (Front)', sku: 'FDB-1001', price: 450.00, cars: 'VW Polo Vivo 2010-2022' },
+        { name: 'ATE Brake Pads (Front)', sku: 'ATE-2001', price: 550.00, cars: 'Toyota Hilux 2016+, Fortuner' },
+        { name: 'Brembo Brake Discs (Front)', sku: 'BRM-D01', price: 850.00, cars: 'BMW 3 Series E90/F30' },
+        { name: 'Safeline Brake Pads (Rear)', sku: 'SAF-R01', price: 300.00, cars: 'Hyundai i20 2012-2020' },
+        { name: 'LUK Clutch Kit', sku: 'LUK-CK01', price: 2100.00, cars: 'Ford Figo 1.4, Fiesta 1.4' },
+        { name: 'Valeo Clutch Kit', sku: 'VAL-CK02', price: 1850.00, cars: 'Renault Clio II/III 1.2/1.4' },
+        { name: 'Sachs Shock Absorber (Front)', sku: 'SAC-SH01', price: 950.00, cars: 'VW Golf Mk5/Mk6' },
+        { name: 'Gabriel Shock Absorber (Rear)', sku: 'GAB-SH02', price: 650.00, cars: 'Toyota Quantum 2005+' },
+        { name: 'Monroe Shock Absorber (Front)', sku: 'MON-SH03', price: 880.00, cars: 'Ford Ranger T6' },
+        { name: 'Willard Battery 616', sku: 'BAT-W616', price: 1200.00, cars: 'Toyota Corolla, VW Polo' },
+        { name: 'SABAT Battery 646', sku: 'BAT-S646', price: 1100.00, cars: 'Nissan NP200, Ford Fiesta' },
+        { name: 'Bosch Fuel Pump', sku: 'BOS-FP01', price: 1450.00, cars: 'VW Polo 9N 1.4/1.6' },
+        { name: 'Pierburg Fuel Pump', sku: 'PIE-FP02', price: 1800.00, cars: 'BMW E46 320i/325i/330i' },
+        { name: 'Gates Timing Belt Kit', sku: 'GAT-TB01', price: 1250.00, cars: 'VW Polo 1.4 16V' },
+        { name: 'Contitech V-Belt', sku: 'CON-VB01', price: 180.00, cars: 'Toyota Hilux 2.5/3.0 D4D' },
+        { name: 'Dayco Fan Belt', sku: 'DAY-FB01', price: 220.00, cars: 'Ford Ranger 2.2/3.2 TDCi' },
+        { name: 'Valeo Wiper Blades 22"', sku: 'VAL-WB22', price: 150.00, cars: 'Universal 22 inch' },
+        { name: 'Bosch Wiper Blades 18"', sku: 'BOS-WB18', price: 140.00, cars: 'Universal 18 inch' },
+        { name: 'Hella H4 Headlight Bulb', sku: 'HEL-H4', price: 65.00, cars: 'Universal H4 fitting' },
+        { name: 'Osram H7 Headlight Bulb', sku: 'OSR-H7', price: 85.00, cars: 'Universal H7 fitting' },
+        { name: 'Philips H1 Headlight Bulb', sku: 'PHI-H1', price: 75.00, cars: 'Universal H1 fitting' },
+        { name: 'Radiator Coolant 5L', sku: 'RAD-C05', price: 150.00, cars: 'Universal' },
+        { name: 'BEHR Radiator', sku: 'BEH-RAD1', price: 1650.00, cars: 'BMW 3 Series E90' },
+        { name: 'Nissens Radiator', sku: 'NIS-RAD2', price: 1450.00, cars: 'VW Golf 5/6, Jetta 5/6' },
+        { name: 'Water Pump', sku: 'WAT-P01', price: 550.00, cars: 'Toyota Hilux 2.5/3.0 D4D' },
+        { name: 'SKF Wheel Bearing Kit', sku: 'SKF-WB01', price: 650.00, cars: 'VW Polo 9N/6R Front' },
+        { name: 'FAG Wheel Bearing Kit', sku: 'FAG-WB02', price: 720.00, cars: 'Ford Ranger T6 Front' },
+        { name: 'Lemforder Control Arm', sku: 'LEM-CA01', price: 1100.00, cars: 'BMW E90 Front Lower' },
+        { name: 'Meyle Tie Rod End', sku: 'MEY-TR01', price: 350.00, cars: 'VW Polo Vivo' },
+        { name: 'TRW Steering Rack', sku: 'TRW-SR01', price: 4500.00, cars: 'Ford Fiesta 2008-2018' },
+        { name: 'Luk Dual Mass Flywheel', sku: 'LUK-DMF01', price: 6500.00, cars: 'VW Amarok 2.0 BiTDI' },
+        { name: 'Thermostat', sku: 'THE-01', price: 250.00, cars: 'Toyota Quantum 2.7' },
+        { name: 'EGR Valve', sku: 'EGR-01', price: 2100.00, cars: 'Ford Ranger 3.2 TDCi' },
+        { name: 'MAF Sensor', sku: 'MAF-01', price: 1550.00, cars: 'VW Golf 5 GTI' },
+        { name: 'Oxygen Sensor (Lambda)', sku: 'O2-01', price: 950.00, cars: 'Hyundai i10 1.2' },
+        { name: 'Crankshaft Position Sensor', sku: 'CPS-01', price: 650.00, cars: 'Nissan NP200' },
+        { name: 'Camshaft Position Sensor', sku: 'CMP-01', price: 700.00, cars: 'Toyota Yaris' },
+        { name: 'CV Joint Kit (Outer)', sku: 'CV-OUT01', price: 450.00, cars: 'VW Citi Golf' },
+        { name: 'CV Joint Kit (Inner)', sku: 'CV-INN01', price: 550.00, cars: 'Toyota Etios' }
+      ]
+
+      for (const p of partsData) {
+        await pool.query(
+          `INSERT INTO public.parts (name, sku, unit_price, quantity, reorder_level, compatible_cars)
+           VALUES ($1, $2, $3, $4, $5, $6)`,
+          [p.name, p.sku, p.price, Math.floor(Math.random() * 50) + 10, 5, p.cars]
+        )
+      }
+      console.log('Seeded 50 auto parts with compatibility data')
+      
+      // Update supplier_parts for the newly seeded parts as well
+      const partsRes = await pool.query('SELECT part_id, unit_price FROM public.parts')
+      const suppRes = await pool.query('SELECT supplier_id FROM public.suppliers ORDER BY supplier_id')
+      const priceMultipliers = [1.0, 0.92, 1.08, 1.15, 0.78]
+      const stockChance = [true, true, true, true, true]
+
+      for (const part of partsRes.rows) {
+        const basePrice = Number(part.unit_price) || 100
+        for (let i = 0; i < suppRes.rows.length; i++) {
+          const suppId = suppRes.rows[i].supplier_id
+          const price = Math.round(basePrice * priceMultipliers[i] * 100) / 100
+          const inStock = !(i === 3 && basePrice > 200) && !(i === 4 && basePrice > 500)
+          await pool.query(
+            `INSERT INTO public.supplier_parts (supplier_id, part_id, price, in_stock)
+             VALUES ($1, $2, $3, $4)
+             ON CONFLICT DO NOTHING`,
+            [suppId, part.part_id, price, inStock]
+          )
+        }
+      }
     }
   })
   .catch((err) => console.error("Database connection error:", err.message));
