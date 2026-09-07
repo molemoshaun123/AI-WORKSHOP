@@ -55,6 +55,7 @@ export default function AppLayout({ title, children }) {
     { name: 'Book Service', path: '/user/service', badge: 'BK' },
     { name: 'Car Evaluation', path: '/user/car-value', badge: 'CV' },
     { name: 'AI Assistant', path: '/user/diagnosis', badge: 'AI' },
+    { name: 'Parts Compatibility', path: '/user/parts-compatibility', badge: 'PC' },
     { name: 'History', path: '/user/history', badge: 'HS' },
     { name: 'Messages', path: '/inbox', badge: 'MS' },
   ]
