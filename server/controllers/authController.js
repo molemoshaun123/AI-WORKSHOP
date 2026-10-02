@@ -83,42 +83,41 @@ const registerUser = async (req, res) => {
 
     const newUser = result.rows[0]
 
-    // Send Welcome Email
-    if (process.env.MAIL_USER && process.env.MAIL_APP_PASSWORD) {
-      try {
-        const transporter = getMailTransport()
-        await transporter.sendMail({
-          from: `"AI Workshop System" <${process.env.MAIL_USER}>`,
-          to: newUser.email,
-          subject: 'Welcome to AI Workshop System!',
-          html: `<p>Hello ${newUser.full_name},</p>
-                 <p>Welcome to AI Workshop! We're excited to have you on board.</p>
-                 <p>You can now add your vehicles, book services, and get AI-powered estimates directly from your dashboard.</p>
-                 <p>Best regards,<br>The AI Workshop Team</p>`,
-        })
-      } catch (mailError) {
-        console.error('Failed to send welcome email:', mailError.message)
-      }
-    }
-
-    // Send Welcome Inbox Message from an Admin (if one exists)
-    try {
-      const adminResult = await pool.query("SELECT user_id FROM users WHERE role = 'admin' LIMIT 1")
-      if (adminResult.rows.length > 0) {
-        const adminId = adminResult.rows[0].user_id
-        await pool.query(
-          "INSERT INTO messages (sender_id, receiver_id, content) VALUES ($1, $2, $3)",
-          [adminId, newUser.user_id, `Welcome to AI Workshop, ${newUser.full_name}! We're here to help you with all your vehicle needs. Send us a message if you need to book a service or have any questions.`]
-        )
-      }
-    } catch (msgError) {
-      console.error('Failed to send welcome inbox message:', msgError.message)
-    }
-
+    // 1. Send the response IMMEDIATELY to prevent the frontend from hanging
     res.status(201).json({
       message: 'User registered successfully',
       user: newUser,
     })
+
+    // 2. Process email and message in the background (Async without blocking)
+    
+    // Send Welcome Email
+    if (process.env.MAIL_USER && process.env.MAIL_APP_PASSWORD) {
+      const transporter = getMailTransport()
+      transporter.sendMail({
+        from: `"AI Workshop System" <${process.env.MAIL_USER}>`,
+        to: newUser.email,
+        subject: 'Welcome to AI Workshop System!',
+        html: `<p>Hello ${newUser.full_name},</p>
+               <p>Welcome to AI Workshop! We're excited to have you on board.</p>
+               <p>You can now add your vehicles, book services, and get AI-powered estimates directly from your dashboard.</p>
+               <p>Best regards,<br>The AI Workshop Team</p>`,
+      }).catch(mailError => console.error('Failed to send welcome email (async):', mailError.message))
+    }
+
+    // Send Welcome Inbox Message from an Admin (if one exists)
+    pool.query("SELECT user_id FROM users WHERE role = 'admin' LIMIT 1")
+      .then(adminResult => {
+        if (adminResult.rows.length > 0) {
+          const adminId = adminResult.rows[0].user_id
+          const welcomeText = `Welcome to AI Workshop, ${newUser.full_name}! We're here to help you with all your vehicle needs. Send us a message if you need to book a service or have any questions.`
+          return pool.query(
+            "INSERT INTO messages (sender_id, receiver_id, job_id, content) VALUES ($1, $2, NULL, $3)",
+            [adminId, newUser.user_id, welcomeText]
+          )
+        }
+      })
+      .catch(msgError => console.error('Failed to send welcome inbox message (async):', msgError.message))
   } catch (error) {
     console.error('Register user error:', error.message)
     res.status(500).json({ message: 'Registration failed', error: error.message })
