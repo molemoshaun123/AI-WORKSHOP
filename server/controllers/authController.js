@@ -45,14 +45,25 @@ const validateRegistrationFields = ({ full_name, email, phone, password }) => {
   return { cleanName, normalizedEmail, cleanPhone, cleanPassword }
 }
 
-const getMailTransport = () =>
-  nodemailer.createTransport({
+const getMailTransport = () => {
+  const mailUser = String(process.env.MAIL_USER || '').trim()
+  const mailPass = String(process.env.MAIL_APP_PASSWORD || '').replace(/\s+/g, '').trim()
+
+  if (!mailUser || !mailPass) {
+    console.warn('Mail credentials missing: MAIL_USER or MAIL_APP_PASSWORD not set')
+    return null
+  }
+
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: String(process.env.MAIL_USER || '').trim(),
-      pass: String(process.env.MAIL_APP_PASSWORD || '').replace(/\s+/g, ''),
+      user: mailUser,
+      pass: mailPass,
     },
   })
+
+  return transporter
+}
 
 const registerUser = async (req, res) => {
   try {
@@ -92,8 +103,8 @@ const registerUser = async (req, res) => {
     // 2. Process email and message in the background (Async without blocking)
     
     // Send Welcome Email
-    if (process.env.MAIL_USER && process.env.MAIL_APP_PASSWORD) {
-      const transporter = getMailTransport()
+    const transporter = getMailTransport()
+    if (transporter) {
       transporter.sendMail({
         from: `"AI Workshop System" <${process.env.MAIL_USER}>`,
         to: newUser.email,
@@ -102,7 +113,11 @@ const registerUser = async (req, res) => {
                <p>Welcome to AI Workshop! We're excited to have you on board.</p>
                <p>You can now add your vehicles, book services, and get AI-powered estimates directly from your dashboard.</p>
                <p>Best regards,<br>The AI Workshop Team</p>`,
-      }).catch(mailError => console.error('Failed to send welcome email (async):', mailError.message))
+      })
+        .then(() => console.log('Welcome email sent to:', newUser.email))
+        .catch(mailError => console.error('Failed to send welcome email:', mailError.message))
+    } else {
+      console.warn('Skipping welcome email — mail transport not configured')
     }
 
     // Send Welcome Inbox Message from an Admin (if one exists)
@@ -298,12 +313,12 @@ const forgotPassword = async (req, res) => {
       [resetTokenHash, expiresAt, user.user_id]
     )
 
-    const appUrl = process.env.CLIENT_URL || 'http://localhost:5173'
+    const appUrl = process.env.CLIENT_URL || 'https://ai-workshop-21js.vercel.app'
     const resetLink = `${appUrl}/reset-password/${resetToken}`
 
-    if (process.env.MAIL_USER && process.env.MAIL_APP_PASSWORD) {
+    const transporter = getMailTransport()
+    if (transporter) {
       try {
-        const transporter = getMailTransport()
         await transporter.sendMail({
           from: `"AI Workshop System" <${process.env.MAIL_USER}>`,
           to: user.email,
@@ -312,12 +327,13 @@ const forgotPassword = async (req, res) => {
                  <p>Click the link below to reset your password. This link expires in 1 hour.</p>
                  <p><a href="${resetLink}">${resetLink}</a></p>`,
         })
+        console.log('Reset email sent to:', user.email)
       } catch (mailError) {
         console.error('Failed to send reset email. Check MAIL_USER and MAIL_APP_PASSWORD credentials:', mailError.message)
         console.warn('Fallback Reset Link (Dev Mode):', resetLink)
       }
     } else {
-      console.warn('MAIL_USER or MAIL_APP_PASSWORD not set. Reset link:', resetLink)
+      console.warn('Mail transport not configured. Reset link:', resetLink)
     }
 
     return res.json({

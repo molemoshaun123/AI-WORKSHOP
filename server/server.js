@@ -17,9 +17,22 @@ const { verifyToken, verifyAdmin } = require('./middleware/authMiddleware')
 
 const app = express()
 
-// Security: Restrict CORS
+// Security: Restrict CORS — allow the deployed frontend AND localhost for dev
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:5173',
+  'https://ai-workshop-21js.vercel.app',
+].filter(Boolean)
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.some(allowed => origin === allowed || origin === allowed.replace(/\/$/, ''))) {
+      return callback(null, true)
+    }
+    callback(new Error('Not allowed by CORS'))
+  },
   credentials: true
 }))
 

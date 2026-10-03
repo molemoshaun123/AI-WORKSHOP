@@ -304,8 +304,8 @@ export default function AdminDashboard() {
               <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Workshop Flow</p>
                 <h3 className="mt-2 mb-6 text-xl font-black text-white">Live Job Distribution</h3>
-                <div className="h-48 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
+                <div className="h-48 w-full" style={{ minWidth: 0, minHeight: 0 }}>
+                  <ResponsiveContainer width="100%" height="100%" minWidth={50} minHeight={50}>
                     <BarChart data={chartData}>
                       <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
                       <Tooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#0f172a', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '12px' }} />
@@ -322,8 +322,8 @@ export default function AdminDashboard() {
               <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-6 shadow-2xl backdrop-blur-xl sm:p-8">
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Financials</p>
                 <h3 className="mt-2 mb-6 text-xl font-black text-white">Revenue (YTD)</h3>
-                <div className="h-48 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
+                <div className="h-48 w-full" style={{ minWidth: 0, minHeight: 0 }}>
+                  <ResponsiveContainer width="100%" height="100%" minWidth={50} minHeight={50}>
                     <AreaChart data={metrics?.revenue_by_month || []}>
                       <defs>
                         <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
