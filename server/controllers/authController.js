@@ -45,24 +45,43 @@ const validateRegistrationFields = ({ full_name, email, phone, password }) => {
   return { cleanName, normalizedEmail, cleanPhone, cleanPassword }
 }
 
+const { Resend } = require('resend')
+
 const getMailTransport = () => {
+  // Option 2: Resend API (Works on Render Free Tier via HTTPS)
+  if (process.env.RESEND_API_KEY) {
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    return {
+      sendMail: async (options) => {
+        // Resend requires the 'from' email to be a verified domain, or 'onboarding@resend.dev' for testing
+        const fromEmail = process.env.RESEND_DOMAIN ? `AI Workshop <noreply@${process.env.RESEND_DOMAIN}>` : 'AI Workshop <onboarding@resend.dev>'
+        
+        return resend.emails.send({
+          from: fromEmail,
+          to: options.to,
+          subject: options.subject,
+          html: options.html,
+        })
+      }
+    }
+  }
+
+  // Option 1: Gmail SMTP (Requires Render Paid Tier or Local Dev)
   const mailUser = String(process.env.MAIL_USER || '').trim()
   const mailPass = String(process.env.MAIL_APP_PASSWORD || '').replace(/\s+/g, '').trim()
 
   if (!mailUser || !mailPass) {
-    console.warn('Mail credentials missing: MAIL_USER or MAIL_APP_PASSWORD not set')
+    console.warn('Mail credentials missing: MAIL_USER, MAIL_APP_PASSWORD, or RESEND_API_KEY not set')
     return null
   }
 
-  const transporter = nodemailer.createTransport({
+  return nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: mailUser,
       pass: mailPass,
     },
   })
-
-  return transporter
 }
 
 const registerUser = async (req, res) => {
