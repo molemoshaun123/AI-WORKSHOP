@@ -76,7 +76,10 @@ const getMailTransport = () => {
   }
 
   return nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    requireTLS: true,
     auth: {
       user: mailUser,
       pass: mailPass,
