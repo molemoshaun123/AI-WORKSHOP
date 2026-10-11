@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Clock, Settings, CheckCircle2, Car, Timer, MessageCircle, Receipt, XCircle, PackageSearch } from 'lucide-react'
+import { Clock, Settings, CheckCircle2, Car, Timer, MessageCircle, Receipt, XCircle, PackageSearch, Sparkles } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import AppLayout from '../../layouts/AppLayout'
 import api from '../../services/api'
@@ -88,38 +88,38 @@ export default function UserDashboard() {
     {
       label: 'Pending',
       value: statusCount('pending'),
-      icon: <Clock className="w-6 h-6" />,
-      tone: 'bg-orange-500/10',
-      border: 'border-orange-500/10',
-      text: 'text-orange-400',
-      iconColor: 'text-orange-500'
+      icon: <Clock className="w-5 h-5" />,
+      tone: 'bg-cyan-500/10',
+      border: 'border-cyan-400/20',
+      text: 'text-cyan-300',
+      iconColor: 'text-cyan-400'
     },
     {
       label: 'In Progress',
       value: statusCount('in_progress'),
-      icon: <Settings className="w-6 h-6" />,
+      icon: <Settings className="w-5 h-5" />,
       tone: 'bg-blue-500/10',
-      border: 'border-blue-500/10',
-      text: 'text-blue-400',
-      iconColor: 'text-blue-500'
+      border: 'border-blue-400/20',
+      text: 'text-blue-300',
+      iconColor: 'text-blue-400'
     },
     {
       label: 'Completed',
       value: statusCount('completed'),
-      icon: <CheckCircle2 className="w-6 h-6" />,
-      tone: 'bg-emerald-500/10',
-      border: 'border-emerald-500/10',
-      text: 'text-emerald-400',
-      iconColor: 'text-emerald-500'
+      icon: <CheckCircle2 className="w-5 h-5" />,
+      tone: 'bg-cyan-500/10',
+      border: 'border-cyan-400/20',
+      text: 'text-cyan-300',
+      iconColor: 'text-cyan-400'
     },
     {
       label: 'Vehicles',
       value: vehicles.length,
-      icon: <Car className="w-6 h-6" />,
-      tone: 'bg-violet-500/10',
-      border: 'border-violet-500/10',
-      text: 'text-violet-400',
-      iconColor: 'text-violet-500'
+      icon: <Car className="w-5 h-5" />,
+      tone: 'bg-blue-500/10',
+      border: 'border-blue-400/20',
+      text: 'text-blue-300',
+      iconColor: 'text-blue-400'
     },
   ]
 
@@ -247,8 +247,9 @@ export default function UserDashboard() {
 
               <div className="relative z-10 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
                 <div className="max-w-3xl">
-                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.25em] text-blue-400">
-                    Welcome Back
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-[10px] font-black uppercase tracking-[0.25em] text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.15)]">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                    AI-POWERED WORKSPACE
                   </div>
 
                   <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
@@ -256,7 +257,7 @@ export default function UserDashboard() {
                   </h2>
 
                   <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 sm:text-base">
-                    Track your bookings, follow repair progress, view your vehicles, and stay connected with the workshop in one place.
+                    Track your bookings, follow repair progress, and leverage AI diagnostics and valuations for your vehicles.
                   </p>
 
                   <div className="mt-6 flex flex-wrap gap-3">
@@ -275,18 +276,18 @@ export default function UserDashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3 shrink-0">
                   {dashboardStats.map((item, i) => (
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: i * 0.1 }}
                       key={item.label}
-                      className={`rounded-[1.5rem] border ${item.border} ${item.tone} p-4`}
+                      className={`rounded-2xl border ${item.border} ${item.tone} px-3 py-3 text-center flex flex-col items-center justify-center min-w-[70px] sm:min-w-[80px]`}
                     >
                       <div className={item.iconColor}>{item.icon}</div>
-                      <p className={`mt-3 text-3xl font-black ${item.text}`}>{item.value}</p>
-                      <p className={`mt-1 text-xs font-black uppercase tracking-[0.15em] ${item.text} opacity-80`}>
+                      <p className={`mt-2 text-2xl font-black ${item.text}`}>{item.value}</p>
+                      <p className={`mt-0.5 text-[9px] sm:text-[10px] font-black uppercase tracking-wider ${item.text} opacity-85 truncate max-w-full`}>
                         {item.label}
                       </p>
                     </motion.div>
@@ -297,7 +298,7 @@ export default function UserDashboard() {
 
             <div className="grid gap-6 lg:grid-cols-2">
               <div className="rounded-[2rem] border border-white/10 bg-slate-900/60 p-6 shadow-xl shadow-black/20 sm:p-8 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500"></div>
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-cyan-400"></div>
                 <div className="mb-5 flex items-center justify-between">
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Upcoming Booking</p>
@@ -305,7 +306,7 @@ export default function UserDashboard() {
                       {nextBooking ? 'Next Appointment' : 'No Appointment Yet'}
                     </h3>
                   </div>
-                  <div className="rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">
+                  <div className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">
                     Booking
                   </div>
                 </div>
@@ -330,7 +331,7 @@ export default function UserDashboard() {
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Quick Access</p>
                     <h3 className="mt-2 text-xl font-black text-white">My Workspace</h3>
                   </div>
-                  <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">
+                  <div className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-300">
                     Ready
                   </div>
                 </div>
@@ -338,9 +339,11 @@ export default function UserDashboard() {
                 <div className="grid grid-cols-2 gap-3">
                   <Link
                     to="/user/vehicle"
-                    className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-white/10"
+                    className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-cyan-400/30 group"
                   >
-                    <Car className="w-8 h-8 text-violet-500" />
+                    <div className="flex justify-between items-start">
+                      <Car className="w-7 h-7 text-cyan-400 transition group-hover:scale-110" />
+                    </div>
                     <p className="mt-3 text-base font-black text-white">Vehicles</p>
                     <p className="mt-1 text-xs text-slate-400">
                       {vehicleLoading ? 'Loading...' : `${vehicles.length} saved`}
@@ -349,37 +352,58 @@ export default function UserDashboard() {
 
                   <Link
                     to="/user/car-value"
-                    className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-white/10"
+                    className="rounded-[1.5rem] border border-cyan-400/10 bg-cyan-500/5 p-4 transition hover:bg-cyan-500/15 hover:border-cyan-400/30 group"
                   >
-                    <Timer className="w-8 h-8 text-orange-500" />
+                    <div className="flex justify-between items-start">
+                      <Timer className="w-7 h-7 text-cyan-400 transition group-hover:scale-110" />
+                      <span className="text-[9px] font-black uppercase tracking-widest text-cyan-300 bg-cyan-400/10 border border-cyan-400/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <Sparkles className="w-2.5 h-2.5 text-cyan-400" /> AI
+                      </span>
+                    </div>
                     <p className="mt-3 text-base font-black text-white">Car Evaluation</p>
-                    <p className="mt-1 text-xs text-slate-400">Value your car</p>
+                    <p className="mt-1 text-xs text-slate-400">AI estimated valuation</p>
                   </Link>
 
                   <Link
                     to="/user/diagnosis"
-                    className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-white/10"
+                    className="rounded-[1.5rem] border border-cyan-400/10 bg-cyan-500/5 p-4 transition hover:bg-cyan-500/15 hover:border-cyan-400/30 group"
                   >
-                    <Settings className="w-8 h-8 text-blue-500" />
+                    <div className="flex justify-between items-start">
+                      <Settings className="w-7 h-7 text-cyan-400 transition group-hover:scale-110" />
+                      <span className="text-[9px] font-black uppercase tracking-widest text-cyan-300 bg-cyan-400/10 border border-cyan-400/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <Sparkles className="w-2.5 h-2.5 text-cyan-400" /> AI
+                      </span>
+                    </div>
                     <p className="mt-3 text-base font-black text-white">Vehicle Assistant</p>
-                    <p className="mt-1 text-xs text-slate-400">Car diagnostics</p>
+                    <p className="mt-1 text-xs text-slate-400">AI symptom diagnosis</p>
+                  </Link>
+
+                  <Link
+                    to="/user/parts-compatibility"
+                    className="rounded-[1.5rem] border border-cyan-400/10 bg-cyan-500/5 p-4 transition hover:bg-cyan-500/15 hover:border-cyan-400/30 group"
+                  >
+                    <div className="flex justify-between items-start">
+                      <PackageSearch className="w-7 h-7 text-cyan-400 transition group-hover:scale-110" />
+                      <span className="text-[9px] font-black uppercase tracking-widest text-cyan-300 bg-cyan-400/10 border border-cyan-400/20 px-2 py-0.5 rounded-full flex items-center gap-1">
+                        <Sparkles className="w-2.5 h-2.5 text-cyan-400" /> AI
+                      </span>
+                    </div>
+                    <p className="mt-3 text-base font-black text-white">Parts Finder</p>
+                    <p className="mt-1 text-xs text-slate-400">AI parts compatibility</p>
                   </Link>
 
                   <Link
                     to="/inbox"
-                    className="rounded-[1.5rem] border border-indigo-500/10 bg-indigo-500/10 p-4 transition hover:bg-indigo-500/20 hover:border-indigo-500/20"
+                    className="col-span-2 rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-cyan-400/30 group flex items-center justify-between"
                   >
-                    <MessageCircle className="w-8 h-8 text-indigo-500" />
-                    <p className="mt-3 text-base font-black text-white">Messages</p>
-                    <p className="mt-1 text-xs text-indigo-400">Talk to workshop</p>
-                  </Link>
-                  <Link
-                    to="/user/parts-compatibility"
-                    className="rounded-[1.5rem] border border-white/5 bg-slate-800/50 p-4 transition hover:bg-slate-800/80 hover:border-white/10"
-                  >
-                    <PackageSearch className="w-8 h-8 text-fuchsia-500" />
-                    <p className="mt-3 text-base font-black text-white">Parts Finder</p>
-                    <p className="mt-1 text-xs text-slate-400">Find compatible parts</p>
+                    <div className="flex items-center gap-3">
+                      <MessageCircle className="w-6 h-6 text-cyan-400" />
+                      <div>
+                        <p className="text-sm font-black text-white">Live Workshop Messages</p>
+                        <p className="text-xs text-slate-400">Direct technician chat</p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-bold text-cyan-400 group-hover:translate-x-1 transition-transform">&rarr;</span>
                   </Link>
                 </div>
               </div>
