@@ -101,17 +101,17 @@ export default function AiCarBot() {
             exit={{ scale: 0, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-20 md:bottom-8 right-4 md:right-8 z-[60] flex items-center gap-2.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-4 text-white font-black shadow-2xl shadow-blue-500/30 transition-all hover:scale-105 hover:shadow-blue-500/40 active:scale-95"
+            className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-40 flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-white font-black shadow-xl shadow-blue-500/25 border border-white/10 transition-all hover:scale-105 hover:shadow-blue-500/40 active:scale-95"
             aria-label="Open AI Car Assistant"
           >
             {pulse && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4">
+              <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-4 w-4 bg-cyan-400"></span>
+                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-cyan-400"></span>
               </span>
             )}
-            <Bot className="w-5 h-5" />
-            <span className="hidden sm:inline text-sm">Ask AI</span>
+            <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            <span className="text-xs sm:text-sm font-bold tracking-tight">Ask AI</span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -124,14 +124,14 @@ export default function AiCarBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="fixed bottom-20 md:bottom-8 right-2 md:right-8 z-[60] w-[calc(100vw-1rem)] max-w-[400px] rounded-[2rem] border border-slate-200 bg-white shadow-2xl flex flex-col overflow-hidden"
-            style={{ height: 'min(560px, calc(100vh - 10rem))' }}
+            className="fixed bottom-6 right-4 sm:right-6 md:bottom-8 md:right-8 z-50 w-[calc(100vw-2rem)] sm:w-96 rounded-3xl border border-white/10 bg-slate-900 shadow-2xl flex flex-col overflow-hidden max-h-[80vh]"
+            style={{ height: 'min(520px, calc(100vh - 6rem))' }}
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-4 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center">
-                  <Car className="w-5 h-5 text-white" />
+                <div className="h-9 w-9 rounded-full bg-white/20 backdrop-blur-xl flex items-center justify-center">
+                  <Car className="w-4 h-4 text-white" />
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-white">Auto Tune AI</h3>
@@ -140,7 +140,7 @@ export default function AiCarBot() {
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="p-2 rounded-full hover:bg-white/10 transition-colors text-white"
+                className="p-1.5 rounded-full hover:bg-white/10 transition-colors text-white"
                 aria-label="Close chat"
               >
                 <X className="w-5 h-5" />
@@ -148,17 +148,17 @@ export default function AiCarBot() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-950/80 [scrollbar-width:thin]">
               {messages.map((m, idx) => (
                 <div key={idx} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div
                     className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
                       m.role === 'user'
                         ? 'bg-blue-600 text-white rounded-tr-md'
-                        : 'bg-white border border-slate-200 text-slate-700 rounded-tl-md'
+                        : 'bg-slate-900 border border-white/10 text-slate-200 rounded-tl-md'
                     }`}
                   >
-                    <p className={`whitespace-pre-wrap text-sm font-semibold leading-relaxed ${m.role === 'user' ? 'text-white' : 'text-slate-700'}`}>
+                    <p className="whitespace-pre-wrap text-sm font-medium leading-relaxed">
                       {m.content}
                     </p>
 
@@ -170,7 +170,7 @@ export default function AiCarBot() {
                             key={q}
                             type="button"
                             onClick={() => send(q)}
-                            className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] font-bold text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+                            className="rounded-xl border border-white/10 bg-slate-800/80 px-2.5 py-1 text-[11px] font-bold text-slate-300 transition hover:bg-slate-700 hover:text-white"
                           >
                             {q}
                           </button>
@@ -183,10 +183,10 @@ export default function AiCarBot() {
 
               {loading && (
                 <div className="flex justify-start">
-                  <div className="bg-white border border-slate-200 rounded-2xl rounded-tl-md px-4 py-3 shadow-sm">
+                  <div className="bg-slate-900 border border-white/10 rounded-2xl rounded-tl-md px-4 py-3 shadow-sm">
                     <div className="flex items-center gap-2 text-slate-400">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span className="text-xs font-bold">Thinking...</span>
+                      <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
+                      <span className="text-xs font-bold text-slate-300">Thinking...</span>
                     </div>
                   </div>
                 </div>
@@ -196,7 +196,7 @@ export default function AiCarBot() {
             </div>
 
             {/* Input */}
-            <div className="border-t border-slate-200 bg-white p-3 shrink-0">
+            <div className="border-t border-white/10 bg-slate-900 p-3 shrink-0">
               <div className="flex gap-2">
                 <input
                   ref={inputRef}
@@ -204,18 +204,18 @@ export default function AiCarBot() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Ask about cars..."
-                  className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  className="flex-1 rounded-xl border border-white/10 bg-slate-950 px-4 py-2.5 text-sm font-medium text-white placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
                 <button
                   onClick={() => send(input)}
                   disabled={loading || !input.trim()}
-                  className="rounded-xl bg-blue-600 px-4 py-3 text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="rounded-xl bg-blue-600 px-4 py-2.5 text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   aria-label="Send message"
                 >
                   <Send className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-center text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">
+              <p className="text-center text-[10px] font-bold text-slate-500 mt-2 uppercase tracking-widest">
                 Only answers car-related questions
               </p>
             </div>

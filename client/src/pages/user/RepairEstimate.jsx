@@ -736,7 +736,7 @@ export default function CarValuator() {
         {renderStepIndicator()}
 
         {/* Card */}
-        <div className="bg-slate-900/60 rounded-[2.5rem] border border-white/10 shadow-xl shadow-black/20 p-8">
+        <div className="bg-slate-900/60 rounded-3xl sm:rounded-[2.5rem] border border-white/10 shadow-xl shadow-black/20 p-6 sm:p-8">
           {step === 0 && renderStep0()}
           {step === 1 && renderStep1()}
           {step === 2 && renderStep2()}
@@ -787,7 +787,7 @@ export default function CarValuator() {
         </div>
 
         {/* Disclaimer */}
-        <p className="text-center text-xs font-semibold text-slate-400 mt-6 px-4 leading-relaxed">
+        <p className="text-center text-xs font-semibold text-slate-400 mt-6 mb-8 px-4 leading-relaxed max-w-xl mx-auto">
           Valuations are AI-generated estimates based on market data and are for informational purposes only.
           Actual selling price may vary based on market conditions, negotiation, and vehicle inspection.
         </p>
